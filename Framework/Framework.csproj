@@ -45,6 +45,9 @@
     <AssemblyOriginatorKeyFile>Framework.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ionic.Zlib">
+      <HintPath>..\Libs\Ionic.Zlib.dll</HintPath>
+    </Reference>
     <Reference Include="MySql.Data, Version=6.6.4.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Libs\MySql.Data.dll</HintPath>
@@ -98,6 +101,7 @@
     <Compile Include="Constants\UpdateType.cs" />
     <Compile Include="Constants\ViolenceLevels.cs" />
     <Compile Include="Cryptography\SRP6.cs" />
+    <Compile Include="Cryptography\ZLib.cs" />
     <Compile Include="Database\DB.cs" />
     <Compile Include="Database\MySqlBase.cs" />
     <Compile Include="Database\SQLResult.cs">
@@ -122,6 +126,7 @@
     <Compile Include="Logging\LogTypes.cs" />
     <Compile Include="Network\Packets\PacketReader.cs" />
     <Compile Include="Network\Packets\PacketWriter.cs" />
+    <Compile Include="ObjectDefines\Addon.cs" />
     <Compile Include="ObjectDefines\ChatMessageValues.cs" />
     <Compile Include="ObjectDefines\Quaternion.cs" />
     <Compile Include="ObjectDefines\SmartGuid.cs" />
