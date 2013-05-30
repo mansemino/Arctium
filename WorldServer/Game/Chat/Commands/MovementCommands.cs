@@ -22,6 +22,12 @@ using System;
 using WorldServer.Game.Packets.PacketHandler;
 using WorldServer.Network;
 
+using System.Linq;
+using System.Collections.Generic;
+using Framework.ClientDB;
+using Framework.ClientDB.Structures.Dbc;
+using Framework.Constants;
+
 namespace WorldServer.Game.Chat.Commands
 {
     public class MovementCommands : Globals
@@ -319,6 +325,246 @@ namespace WorldServer.Game.Chat.Commands
 
             if (DB.World.Execute("DELETE FROM teleport_locations WHERE location = ?", location))
                 ChatHandler.SendMessage(ref session, chatMessage);
+        }
+
+
+        [ChatCommand("telelist", "Usage: !telelist [#string] (List all the teleport locations [containing #string])")]
+        public static void TeleList(string[] args, WorldClass session)
+        {
+            string infoMsg = "No locations found!";
+            ChatMessageValues chatMessage;
+            SQLResult result;
+
+            // If there is an argument, use it as 'LIKE' parameter into the SQL command
+            if (args.Length > 1)
+            {
+                string query = String.Format("SELECT location FROM teleport_locations WHERE location LIKE '%{0}%' ORDER BY location ASC", CommandParser.Read<string>(args, 1));
+                infoMsg = "There aren't locations matching your criteria!";
+                result = DB.World.Select(query);
+            }
+            else
+            {
+                result = DB.World.Select("SELECT location FROM teleport_locations ORDER BY location ASC");
+            }
+
+            if (result.Count == 0)
+            {
+                chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, infoMsg);
+                ChatHandler.SendMessage(ref session, chatMessage);
+            }
+            else
+            {
+                chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, String.Format("Found {0} result(s):", result.Count));
+                ChatHandler.SendMessage(ref session, chatMessage);
+
+                for (int i = 0; i < result.Count; i++)
+                {
+                    chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, result.Read<string>(i, "location"));
+                    ChatHandler.SendMessage(ref session, chatMessage);
+                }
+            }
+        }
+
+        [ChatCommand("goPOI", "Usage: !goPOI #ID [#z] (teleport to a POI from DBC file [at height #z])")]
+        public static void goPOI(string[] args, WorldClass session)
+        {
+            var pChar = session.Character;
+            ChatMessageValues chatMessage;
+
+            int nPOIs = CliDB.AreaPOI.Count;
+            if ((args.Length < 2) || (args.Length > 3))
+            {
+                chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, "wrong number of parameters!");
+                ChatHandler.SendMessage(ref session, chatMessage);
+                return;
+            }
+
+            uint POI = CommandParser.Read<uint>(args, 1);
+
+            // Z value not stored into AreaPOI.dbc, so I take a fixed value or the one given at command line
+            float z = (args.Length == 3) ? CommandParser.Read<float>(args, 2) : 300;
+
+            var area = CliDB.AreaPOI.SingleOrDefault(areapoi => areapoi.AreaID == POI);
+            if (area == null)
+            {
+                chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, "POI not found!!!");
+                ChatHandler.SendMessage(ref session, chatMessage);
+                return;
+            }
+
+            Vector4 vector = new Vector4()
+            {
+                X = area.X,
+                Y = area.Y,
+                Z = z,
+                O = 0
+            };
+
+            uint mapId = area.mapID;
+
+            if (pChar.Map == mapId)
+            {
+                MoveHandler.HandleMoveTeleport(ref session, vector);
+                ObjectMgr.SetPosition(ref pChar, vector);
+            }
+            else
+            {
+                MoveHandler.HandleTransferPending(ref session, mapId);
+                MoveHandler.HandleNewWorld(ref session, vector, mapId);
+
+                ObjectMgr.SetPosition(ref pChar, vector);
+                ObjectMgr.SetMap(ref pChar, mapId);
+
+                ObjectHandler.HandleUpdateObjectCreate(ref session);
+            }
+
+            chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, String.Format("Teleported to {0}!", area.Name));
+            ChatHandler.SendMessage(ref session, chatMessage);
+        }
+
+        [ChatCommand("listPOI", "Usage: !listPOI [#string] (lists all POIs from DBC file [which contains #string])")]
+        public static void listPOI(string[] args, WorldClass session)
+        {
+            var pChar = session.Character;
+            ChatMessageValues chatMessage;
+
+            if (args.Length == 1)
+            {
+                // List all POIs
+                foreach (var poi in CliDB.AreaPOI)
+                {
+                    chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, String.Format("{0} -> {1}", poi.Name, poi.AreaID));
+                    ChatHandler.SendMessage(ref session, chatMessage);
+                }
+            }
+            else if (args.Length == 2)
+            {
+                // List POIs which contains the given string
+                string givenstr = CommandParser.Read<string>(args, 1);
+                var areas = CliDB.AreaPOI.Where(areapoi => areapoi.Name.IndexOf(givenstr) > -1).ToList();
+
+                int count = areas.Count;
+                if (count == 0)
+                {
+                    chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, String.Format("No POIs found containing '{0}'!!!", givenstr));
+                    ChatHandler.SendMessage(ref session, chatMessage);
+                }
+                else
+                {
+                    chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, String.Format("Found {0} POIs containing '{1}':", count, givenstr));
+                    ChatHandler.SendMessage(ref session, chatMessage);
+                    foreach (var poi in areas)
+                    {
+                        chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, String.Format("{0} -> {1}", poi.Name, poi.AreaID));
+                        ChatHandler.SendMessage(ref session, chatMessage);
+                    }
+                }
+            }
+            else
+            {
+                chatMessage = new ChatMessageValues(0, "Wrong number of parameters");
+                ChatHandler.SendMessage(ref session, chatMessage);
+            }
+        }
+
+        [ChatCommand("goLoc", "Usage: !goLoc #ID (teleport to a WorldSafeLoc from DBC file)")]
+        public static void goLoc(string[] args, WorldClass session)
+        {
+            var pChar = session.Character;
+            ChatMessageValues chatMessage;
+
+            if (args.Length != 2)
+            {
+                chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, "You must provide an ID to retrieve its location!");
+                ChatHandler.SendMessage(ref session, chatMessage);
+                return;
+            }
+
+            uint WSL = CommandParser.Read<uint>(args, 1);
+
+            var safeloc = CliDB.WorldSafeLocs.SingleOrDefault(areapoi => areapoi.ID == WSL);
+
+            if (safeloc == null)
+            {
+                chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, "ID not found!!!");
+                ChatHandler.SendMessage(ref session, chatMessage);
+                return;
+            }
+
+            Vector4 vector = new Vector4()
+            {
+                X = safeloc.X,
+                Y = safeloc.Y,
+                Z = safeloc.Z,
+                O = Math.Min(Math.Max(safeloc.O, -6.2831853F), 6.2831853F) // Avoid extrange values on DBCs
+            };
+            uint mapId = safeloc.mapID;
+
+            if (pChar.Map == mapId)
+            {
+                MoveHandler.HandleMoveTeleport(ref session, vector);
+                ObjectMgr.SetPosition(ref pChar, vector);
+            }
+            else
+            {
+                MoveHandler.HandleTransferPending(ref session, mapId);
+                MoveHandler.HandleNewWorld(ref session, vector, mapId);
+
+                ObjectMgr.SetPosition(ref pChar, vector);
+                ObjectMgr.SetMap(ref pChar, mapId);
+
+                ObjectHandler.HandleUpdateObjectCreate(ref session);
+            }
+
+            chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, String.Format("Teleported to {0}", safeloc.Name));
+            ChatHandler.SendMessage(ref session, chatMessage);
+        }
+
+        [ChatCommand("listLocs", "Usage: !listSafeLocs [#string] (lists all WorldSafeLocs from DBC file [which contains #string])")]
+        public static void listLocs(string[] args, WorldClass session)
+        {
+            var pChar = session.Character;
+            ChatMessageValues chatMessage;
+
+            int nWSLs = CliDB.WorldSafeLocs.Count;
+            if (args.Length == 1)
+            {
+                // List all WorldSafeLocs
+                foreach (var wsl in CliDB.WorldSafeLocs)
+                {
+                    chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, String.Format("{0} -> {1}", wsl.Name, wsl.ID));
+                    ChatHandler.SendMessage(ref session, chatMessage);
+                }
+            }
+            else if (args.Length == 2)
+            {
+                // List WSLs which contains the given string
+                string givenstr = CommandParser.Read<string>(args, 1);
+                var locs = CliDB.WorldSafeLocs.Where(safeloc => safeloc.Name.IndexOf(givenstr) > -1).ToList();
+
+                // If no POIs found, we'll warn about it
+                int count = locs.Count;
+                if (count == 0)
+                {
+                    chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, String.Format("No WorldSafeLocs found containing '{0}'!!!", givenstr));
+                    ChatHandler.SendMessage(ref session, chatMessage);
+                }
+                else
+                {
+                    chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, String.Format("Found {0} WorldSafeLocs containing '{1}':", count, givenstr));
+                    ChatHandler.SendMessage(ref session, chatMessage);
+                    foreach (var wfl in locs)
+                    {
+                        chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, String.Format("{0} -> {1}", wfl.Name, wfl.ID));
+                        ChatHandler.SendMessage(ref session, chatMessage);
+                    }
+                }
+            }
+            else
+            {
+                chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, "Wrong number of parameters");
+                ChatHandler.SendMessage(ref session, chatMessage);
+            }
         }
     }
 }

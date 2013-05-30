@@ -64,6 +64,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientDB\CustomTypes\Unused.cs" />
+    <Compile Include="ClientDB\Structures\Dbc\AreaPOI.cs" />
+    <Compile Include="ClientDB\Structures\Dbc\AreaTrigger.cs" />
     <Compile Include="ClientDB\Structures\Dbc\ChrClasses.cs" />
     <Compile Include="ClientDB\Structures\Dbc\ChrSpecialization.cs" />
     <Compile Include="ClientDB\Structures\Dbc\NameGen.cs" />
@@ -71,6 +73,7 @@
     <Compile Include="ClientDB\Structures\Dbc\Spell.cs" />
     <Compile Include="ClientDB\Structures\Dbc\SpellLevels.cs" />
     <Compile Include="ClientDB\Structures\Dbc\Talent.cs" />
+    <Compile Include="ClientDB\Structures\Dbc\WorldSafeLocs.cs" />
     <Compile Include="Configuration\Config.cs" />
     <Compile Include="Configuration\RealmConfig.cs" />
     <Compile Include="Configuration\WorldConfig.cs" />

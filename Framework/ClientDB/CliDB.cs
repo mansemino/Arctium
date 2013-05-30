@@ -34,7 +34,11 @@ namespace Framework.ClientDB
         public static List<Spell> Spell;
         public static List<SpellLevels> SpellLevels;
         public static List<Talent> Talent;
-        
+
+        public static List<AreaPOI> AreaPOI;
+        public static List<AreaTrigger> AreaTrigger;
+        public static List<WorldSafeLocs> WorldSafeLocs;
+
         public static void Initialize()
         {
             Log.Message(LogType.Normal, "Loading CliDBs...");
@@ -47,6 +51,10 @@ namespace Framework.ClientDB
             Spell                = DBReader.Read<Spell>("Spell.dbc");
             SpellLevels          = DBReader.Read<SpellLevels>("SpellLevels.dbc");
             Talent               = DBReader.Read<Talent>("Talent.dbc");
+
+            AreaPOI              = DBReader.Read<AreaPOI>("AreaPOI.dbc");
+            AreaTrigger          = DBReader.Read<AreaTrigger>("AreaTrigger.dbc");
+            WorldSafeLocs        = DBReader.Read<WorldSafeLocs>("WorldSafeLocs.dbc");
 
             Log.Message(LogType.Normal, "Loaded {0} CliDBs.", Count);
             Log.Message();
