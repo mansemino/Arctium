@@ -26,16 +26,39 @@ namespace WorldServer.Game.Packets.PacketHandler
         [Opcode(ClientMessage.CliLogoutRequest, "16992")]
         public static void HandleLogoutRequest(ref PacketReader packet, ref WorldClass session)
         {
+            LogOutMgr.Add(session.Character.Guid);
+
+            PacketWriter logoutResponse = new PacketWriter(ServerMessage.LogoutResponse);
+            BitPack BitPack = new BitPack(logoutResponse);
+            logoutResponse.WriteUInt8(0);
+            BitPack.Write(0);
+            BitPack.Flush();
+            session.Send(ref logoutResponse);
+
+            PacketWriter StandStateUpdate = new PacketWriter(ServerMessage.StandStateUpdate);
+            StandStateUpdate.WriteUInt8(1);
+            session.Send(ref StandStateUpdate);
+
+            RootHandler.HandleMoveRoot(ref session); 
+        }
+
+        [Opcode(ClientMessage.CliLogoutCancel, "16992")]
+        public static void HandleLogoutCancel(ref PacketReader packet, ref WorldClass session)
+        {
+            LogOutMgr.Remove(session.Character.Guid);
+
+            RootHandler.HandleMoveUnroot(ref session);
+
+            PacketWriter LogoutCancelAck = new PacketWriter(ServerMessage.LogoutCancelAck);
+            session.Send(ref LogoutCancelAck);
+        }
+
+        [Opcode(ClientMessage.CliLogoutInstant, "16992")]
+        public static void HandleLogoutInstant(ref PacketReader packet, ref WorldClass session)
+        {
             var pChar = session.Character;
 
-            ObjectMgr.SavePositionToDB(pChar);
-
-            PacketWriter logoutComplete = new PacketWriter(ServerMessage.LogoutComplete);
-            session.Send(ref logoutComplete);
-
-            // Destroy object after logout
-            WorldMgr.SendToInRangeCharacter(pChar, ObjectHandler.HandleDestroyObject(ref session, pChar.Guid));
-            WorldMgr.DeleteSession(pChar.Guid);
+            LogOutMgr.LogOut(ref session);
         }
     }
 }

@@ -60,6 +60,8 @@ namespace Framework.Constants.NetMessage
         CliQueryNPCText                            = 0x009E,
         CliTalkToGossip                            = 0x1414,
         CliLogoutRequest                           = 0x1150,
+        CliLogoutCancel                            = 0x1309,
+        CliLogoutInstant                           = 0x0A82,
         CliSetSelection                            = 0x1759,
         #endregion
 

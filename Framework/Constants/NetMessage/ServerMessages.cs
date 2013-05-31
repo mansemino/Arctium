@@ -89,6 +89,8 @@ namespace Framework.Constants.NetMessage
         MoveSetSwimSpeed                         = 0x0905,
         MoveSetFlightSpeed                       = 0x0E54,
         MoveTeleport                             = 0x0C54,
+        MoveUnroot                               = 0x0E50,
+        MoveRoot                                 = 0x0505,
         #endregion
 
         #region JAMClientQuest
