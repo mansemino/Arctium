@@ -25,6 +25,8 @@ using System.Linq;
 using WorldServer.Game.ObjectDefines;
 using Talent = WorldServer.Game.ObjectDefines.Talent;
 
+using WorldServer.Game.Packets.PacketHandler;
+
 namespace WorldServer.Game.WorldEntities
 {
     public class Character : WorldObject
@@ -52,6 +54,10 @@ namespace WorldServer.Game.WorldEntities
         public Byte ActiveSpecGroup;
         public UInt32 PrimarySpec;
         public UInt32 SecondarySpec;
+        public Boolean UnitIsAfk;
+        public String UnitIsAfkMessage;
+        public Boolean UnitIsDnd;
+        public String UnitIsDndMessage;
 
         public Dictionary<ulong, WorldObject> InRangeObjects = new Dictionary<ulong, WorldObject>();
 
@@ -93,6 +99,11 @@ namespace WorldServer.Game.WorldEntities
             ActiveSpecGroup = result.Read<Byte>(0, "ActiveSpecGroup");
             PrimarySpec     = result.Read<UInt32>(0, "PrimarySpecId");
             SecondarySpec   = result.Read<UInt32>(0, "SecondarySpecId");
+
+            UnitIsAfk        = false;
+            UnitIsAfkMessage = "";
+            UnitIsDnd        = false;
+            UnitIsDndMessage = "";
 
             Globals.SpecializationMgr.LoadTalents(this);
             Globals.SpellMgr.LoadSpells(this);
@@ -174,5 +185,53 @@ namespace WorldServer.Game.WorldEntities
 
             return (ActiveSpecGroup == 0 && PrimarySpec != 0) ? PrimarySpec : SecondarySpec;
         }
+
+        public void setAfkState(string afkText = "")
+        {
+            bool afkState = (afkText.Length > 0);
+
+            if (this.UnitIsAfk != afkState)
+            {
+                this.UnitIsAfk = afkState;
+
+                if (this.UnitIsAfk && this.UnitIsDnd)
+                {
+                    this.UnitIsDnd = false;
+                    this.UnitIsDndMessage = "";
+                }
+
+                this.UnitIsAfkMessage = afkText;
+
+                SetUpdateField<Int32>((int)PlayerFields.PlayerFlags, (int)((this.UnitIsAfk) ? PlayerFlag.Afk : PlayerFlag.None));
+
+                var session = WorldMgr.GetSession(this.Guid);
+                ObjectHandler.HandleUpdateObjectValues(ref session, true);
+            }
+        }
+
+        public void setDndState(string dndText = "")
+        {
+            bool dndState = (dndText.Length > 0);
+
+            if (this.UnitIsDnd != dndState)
+            {
+                this.UnitIsDnd = dndState;
+
+                if (this.UnitIsAfk && this.UnitIsDnd)
+                {
+                    this.UnitIsAfk = false;
+                    this.UnitIsAfkMessage = "";
+                }
+
+                this.UnitIsDndMessage = dndText;
+
+                SetUpdateField<Int32>((int)PlayerFields.PlayerFlags, (int)((this.UnitIsDnd) ? PlayerFlag.Dnd : PlayerFlag.None));
+
+                var session = WorldMgr.GetSession(this.Guid);
+                
+                ObjectHandler.HandleUpdateObjectValues(ref session, true);
+            }
+        }
+
     }
 }

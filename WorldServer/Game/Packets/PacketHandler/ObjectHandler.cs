@@ -47,7 +47,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             session.Send(ref updateObject);
         }
 
-        public static void HandleUpdateObjectValues(ref WorldClass session)
+        public static void HandleUpdateObjectValues(ref WorldClass session, bool broadcast = false)
         {
             WorldObject character = session.Character;
             PacketWriter updateObject = new PacketWriter(ServerMessage.ObjectUpdate);
@@ -61,6 +61,9 @@ namespace WorldServer.Game.Packets.PacketHandler
             character.WriteDynamicUpdateFields(ref updateObject);
 
             session.Send(ref updateObject);
+
+            if (broadcast)
+                WorldMgr.SendToInRangeCharacter(character as Character, updateObject);
         }
 
         public static PacketWriter HandleDestroyObject(ref WorldClass session, ulong guid, bool animation = false)

@@ -84,6 +84,17 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             chatMessage = new ChatMessageValues(MessageType.ChatMessageWhisper, message, false, true);
             SendMessage(ref rSession, chatMessage, session);
+
+            if (rSession.Character.UnitIsAfk)
+            {
+                chatMessage = new ChatMessageValues(MessageType.ChatMessageAfk, rSession.Character.UnitIsAfkMessage, false, true);
+                SendMessage(ref session, chatMessage, rSession);
+            }
+            else if (rSession.Character.UnitIsDnd)
+            {
+                chatMessage = new ChatMessageValues(MessageType.ChatMessageDnd, rSession.Character.UnitIsDndMessage, false, true);
+                SendMessage(ref session, chatMessage, rSession);
+            }
         }
 
         public static void SendMessage(ref WorldClass session, ChatMessageValues chatMessage, WorldClass pSession = null)

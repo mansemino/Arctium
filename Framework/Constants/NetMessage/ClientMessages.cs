@@ -23,6 +23,8 @@ namespace Framework.Constants.NetMessage
         ChatMessageSay                             = 0x016A,
         ChatMessageYell                            = 0x1333,
         ChatMessageWhisper                         = 0x143A,
+        CliChatMessageAfk		                   = 0x062B,
+        CliChatMessageDnd		                   = 0x1271,
         #endregion
 
         #region UserRouterClient

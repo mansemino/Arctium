@@ -98,6 +98,7 @@
     <Compile Include="Constants\ObjectType.cs" />
     <Compile Include="Constants\Movement\MovementFlags2.cs" />
     <Compile Include="Constants\Account\Roles.cs" />
+    <Compile Include="Constants\PlayerFlags.cs" />
     <Compile Include="Constants\UpdateFields\UpdateFieldFlags.cs" />
     <Compile Include="Constants\UpdateFields\UpdateFields.cs" />
     <Compile Include="Constants\UpdateFlags.cs" />
