@@ -15,15 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Framework.Configuration;
 using Framework.Constants;
 using Framework.Constants.NetMessage;
 using Framework.Database;
 using Framework.Logging;
 using Framework.Network.Packets;
 using Framework.ObjectDefines;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using WorldServer.Game.ObjectDefines;
 using WorldServer.Network;
 
@@ -34,15 +35,18 @@ namespace WorldServer.Game.Packets.PacketHandler
         public static void HandleMessageOfTheDay(ref WorldClass session)
         {
             PacketWriter motd = new PacketWriter(ServerMessage.MOTD);
-            BitPack BitPack = new BitPack(motd);
+            BitPack BitPack   = new BitPack(motd);
+            
+            List<string> motds = new List<string>();
 
-            List<String> motds = new List<String>();
+            string[] loadmotd = WorldConfig.Motd.Split(new string[] { "\\n" }, StringSplitOptions.None);
 
-            motds.Add("Arctium MoP test");
-            motds.Add("Welcome to our MoP server test.");
-            motds.Add("Your development team =)");
+            foreach (string motdline in loadmotd)
+            {
+                motds.Add(motdline);
+            }
 
-            BitPack.Write<uint>(3, 4);
+            BitPack.Write<uint>((uint)motds.Count, 4);
 
             motds.ForEach(m => BitPack.Write(m.Length, 7));
 

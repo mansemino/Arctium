@@ -15,12 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
 using Framework.Configuration;
 using Framework.Console;
 using Framework.Console.Commands;
 using Framework.Database;
 using Framework.Logging;
-using System;
 using WorldServer.Game;
 using WorldServer.Game.Chat;
 using WorldServer.Game.Packets;
@@ -84,8 +84,6 @@ namespace WorldServer
             GC.Collect();
             Log.Message(LogType.Normal, "Total Memory: {0} Kilobytes", GC.GetTotalMemory(false) / 1024);
 
-            // Init Command handlers...
-            CommandDefinitions.Initialize();
             CommandManager.InitCommands();
         }
     }

@@ -15,9 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
 using Framework.Constants.GameObject;
 using Framework.Database;
-using System;
 using WorldServer.Game.ObjectDefines;
 
 namespace WorldServer.Game.WorldEntities
@@ -35,29 +35,29 @@ namespace WorldServer.Game.WorldEntities
             {
                 Stats = new GameObjectStats();
 
-                Stats.Id             = result.Read<Int32>(0, "Id");
+                Stats.Id             = result.Read<int>(0, "Id");
                 Stats.Type           = result.Read<GameObjectType>(0, "Type");
-                Stats.Flags          = result.Read<Int32>(0, "Flags");
+                Stats.Flags          = result.Read<int>(0, "Flags");
 
-                Stats.DisplayInfoId  = result.Read<Int32>(0, "DisplayInfoId");
-                Stats.Name           = result.Read<String>(0, "Name");
-                Stats.IconName       = result.Read<String>(0, "IconName");
-                Stats.CastBarCaption = result.Read<String>(0, "CastBarCaption");
+                Stats.DisplayInfoId  = result.Read<int>(0, "DisplayInfoId");
+                Stats.Name           = result.Read<string>(0, "Name");
+                Stats.IconName       = result.Read<string>(0, "IconName");
+                Stats.CastBarCaption = result.Read<string>(0, "CastBarCaption");
 
                 for (int i = 0; i < Stats.Data.Capacity; i++)
-                    Stats.Data.Add(result.Read<Int32>(0, "Data", i));
+                    Stats.Data.Add(result.Read<int>(0, "Data", i));
 
-                Stats.Size = result.Read<Single>(0, "Size");
+                Stats.Size = result.Read<float>(0, "Size");
 
                 for (int i = 0; i < Stats.QuestItemId.Capacity; i++)
                 {
-                    var questItem = result.Read<Int32>(0, "QuestItemId", i);
+                    var questItem = result.Read<int>(0, "QuestItemId", i);
 
                     if (questItem != 0)
                         Stats.QuestItemId.Add(questItem);
                 }
 
-                Stats.ExpansionRequired = result.Read<Int32>(0, "ExpansionRequired");
+                Stats.ExpansionRequired = result.Read<int>(0, "ExpansionRequired");
             }
         }
     }

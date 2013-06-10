@@ -15,13 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Console;
+using Framework.Console.Commands;
 using Framework.Database;
 using Framework.ObjectDefines;
-using System;
 using WorldServer.Game.Packets.PacketHandler;
 using WorldServer.Network;
 
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using Framework.ClientDB;
@@ -280,7 +280,7 @@ namespace WorldServer.Game.Chat.Commands
         {
             var pChar = session.Character;
 
-            var message = String.Format("Your position is X: {0}, Y: {1}, Z: {2}, W(O): {3}, Map: {4}, Zone: {5}", pChar.Position.X, pChar.Position.Y, pChar.Position.Z, pChar.Position.O, pChar.Map, pChar.Zone);
+            var message = string.Format("Your position is X: {0}, Y: {1}, Z: {2}, W(O): {3}, Map: {4}, Zone: {5}", pChar.Position.X, pChar.Position.Y, pChar.Position.Z, pChar.Position.O, pChar.Map, pChar.Zone);
             ChatMessageValues chatMessage = new ChatMessageValues(0, message);
 
             ChatHandler.SendMessage(ref session, chatMessage);
@@ -301,14 +301,14 @@ namespace WorldServer.Game.Chat.Commands
                 if (DB.World.Execute("INSERT INTO teleport_locations (location, x, y, z, o, map) " +
                     "VALUES (?, ?, ?, ?, ?, ?)", location, pChar.Position.X, pChar.Position.Y, pChar.Position.Z, pChar.Position.O, pChar.Map))
                 {
-                    chatMessage.Message = String.Format("Teleport location '{0}' successfully added.", location);
+                    chatMessage.Message = string.Format("Teleport location '{0}' successfully added.", location);
 
                     ChatHandler.SendMessage(ref session, chatMessage);
                 }
             }
             else
             {
-                chatMessage.Message = String.Format("Teleport location '{0}' already exist.", location);
+                chatMessage.Message = string.Format("Teleport location '{0}' already exist.", location);
 
                 ChatHandler.SendMessage(ref session, chatMessage);
             }
@@ -321,7 +321,7 @@ namespace WorldServer.Game.Chat.Commands
 
             string location = CommandParser.Read<string>(args, 1);
 
-            ChatMessageValues chatMessage = new ChatMessageValues(0, String.Format("Teleport location '{0}' successfully deleted.", location));
+            ChatMessageValues chatMessage = new ChatMessageValues(0, string.Format("Teleport location '{0}' successfully deleted.", location));
 
             if (DB.World.Execute("DELETE FROM teleport_locations WHERE location = ?", location))
                 ChatHandler.SendMessage(ref session, chatMessage);
@@ -338,7 +338,7 @@ namespace WorldServer.Game.Chat.Commands
             // If there is an argument, use it as 'LIKE' parameter into the SQL command
             if (args.Length > 1)
             {
-                string query = String.Format("SELECT location FROM teleport_locations WHERE location LIKE '%{0}%' ORDER BY location ASC", CommandParser.Read<string>(args, 1));
+                string query = string.Format("SELECT location FROM teleport_locations WHERE location LIKE '%{0}%' ORDER BY location ASC", CommandParser.Read<string>(args, 1));
                 infoMsg = "There aren't locations matching your criteria!";
                 result = DB.World.Select(query);
             }
@@ -354,7 +354,7 @@ namespace WorldServer.Game.Chat.Commands
             }
             else
             {
-                chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, String.Format("Found {0} result(s):", result.Count));
+                chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, string.Format("Found {0} result(s):", result.Count));
                 ChatHandler.SendMessage(ref session, chatMessage);
 
                 for (int i = 0; i < result.Count; i++)
@@ -418,7 +418,7 @@ namespace WorldServer.Game.Chat.Commands
                 ObjectHandler.HandleUpdateObjectCreate(ref session);
             }
 
-            chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, String.Format("Teleported to {0}!", area.Name));
+            chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, string.Format("Teleported to {0}!", area.Name));
             ChatHandler.SendMessage(ref session, chatMessage);
         }
 
@@ -433,7 +433,7 @@ namespace WorldServer.Game.Chat.Commands
                 // List all POIs
                 foreach (var poi in CliDB.AreaPOI)
                 {
-                    chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, String.Format("{0} -> {1}", poi.Name, poi.AreaID));
+                    chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, string.Format("{0} -> {1}", poi.Name, poi.AreaID));
                     ChatHandler.SendMessage(ref session, chatMessage);
                 }
             }
@@ -446,16 +446,16 @@ namespace WorldServer.Game.Chat.Commands
                 int count = areas.Count;
                 if (count == 0)
                 {
-                    chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, String.Format("No POIs found containing '{0}'!!!", givenstr));
+                    chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, string.Format("No POIs found containing '{0}'!!!", givenstr));
                     ChatHandler.SendMessage(ref session, chatMessage);
                 }
                 else
                 {
-                    chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, String.Format("Found {0} POIs containing '{1}':", count, givenstr));
+                    chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, string.Format("Found {0} POIs containing '{1}':", count, givenstr));
                     ChatHandler.SendMessage(ref session, chatMessage);
                     foreach (var poi in areas)
                     {
-                        chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, String.Format("{0} -> {1}", poi.Name, poi.AreaID));
+                        chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, string.Format("{0} -> {1}", poi.Name, poi.AreaID));
                         ChatHandler.SendMessage(ref session, chatMessage);
                     }
                 }
@@ -516,7 +516,7 @@ namespace WorldServer.Game.Chat.Commands
                 ObjectHandler.HandleUpdateObjectCreate(ref session);
             }
 
-            chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, String.Format("Teleported to {0}", safeloc.Name));
+            chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, string.Format("Teleported to {0}", safeloc.Name));
             ChatHandler.SendMessage(ref session, chatMessage);
         }
 
@@ -532,7 +532,7 @@ namespace WorldServer.Game.Chat.Commands
                 // List all WorldSafeLocs
                 foreach (var wsl in CliDB.WorldSafeLocs)
                 {
-                    chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, String.Format("{0} -> {1}", wsl.Name, wsl.ID));
+                    chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, string.Format("{0} -> {1}", wsl.Name, wsl.ID));
                     ChatHandler.SendMessage(ref session, chatMessage);
                 }
             }
@@ -546,16 +546,16 @@ namespace WorldServer.Game.Chat.Commands
                 int count = locs.Count;
                 if (count == 0)
                 {
-                    chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, String.Format("No WorldSafeLocs found containing '{0}'!!!", givenstr));
+                    chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, string.Format("No WorldSafeLocs found containing '{0}'!!!", givenstr));
                     ChatHandler.SendMessage(ref session, chatMessage);
                 }
                 else
                 {
-                    chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, String.Format("Found {0} WorldSafeLocs containing '{1}':", count, givenstr));
+                    chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, string.Format("Found {0} WorldSafeLocs containing '{1}':", count, givenstr));
                     ChatHandler.SendMessage(ref session, chatMessage);
                     foreach (var wfl in locs)
                     {
-                        chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, String.Format("{0} -> {1}", wfl.Name, wfl.ID));
+                        chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, string.Format("{0} -> {1}", wfl.Name, wfl.ID));
                         ChatHandler.SendMessage(ref session, chatMessage);
                     }
                 }

@@ -14,14 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
+using Framework.Console.Commands;
 using Framework.Database;
 using Framework.Logging;
 
-namespace Framework.Console.Commands
+namespace WorldServer.Console.Commands
 {
     public class AccountCommands : CommandParser
     {
+        [Command("caccount", "")]
         public static void CreateAccount(string[] args)
         {
             string name = Read<string>(args, 0);
@@ -30,11 +32,8 @@ namespace Framework.Console.Commands
             if (name == null || password == null)
                 return;
 
-            name = name.ToUpperInvariant();
-            password = password.ToUpperInvariant();
-
-            //byte[] hash = new SHA1CryptoServiceProvider().ComputeHash(Encoding.ASCII.GetBytes(password));
-            //string hashString = BitConverter.ToString(hash).Replace("-", "");
+            name = name.ToUpper();
+            password = password.ToUpper();
 
             SQLResult result = DB.Realms.Select("SELECT * FROM accounts WHERE name = ?", name);
             if (result.Count == 0)

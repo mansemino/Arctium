@@ -39,6 +39,8 @@ namespace WorldServer.Game.Packets.PacketHandler
             StandStateUpdate.WriteUInt8(1);
             session.Send(ref StandStateUpdate);
 
+            session.Character.setStandState(1);
+            
             RootHandler.HandleMoveRoot(ref session); 
         }
 
@@ -51,6 +53,12 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             PacketWriter LogoutCancelAck = new PacketWriter(ServerMessage.LogoutCancelAck);
             session.Send(ref LogoutCancelAck);
+
+            PacketWriter StandStateUpdate = new PacketWriter(ServerMessage.StandStateUpdate);
+            StandStateUpdate.WriteUInt8(0);
+            session.Send(ref StandStateUpdate);
+
+            session.Character.setStandState(0);
         }
 
         [Opcode(ClientMessage.CliLogoutInstant, "16992")]

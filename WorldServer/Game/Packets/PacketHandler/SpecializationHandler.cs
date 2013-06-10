@@ -15,14 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Framework.ClientDB;
 using Framework.Constants;
 using Framework.Constants.NetMessage;
 using Framework.Logging;
 using Framework.Network.Packets;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using WorldServer.Network;
 
 namespace WorldServer.Game.Packets.PacketHandler
@@ -38,7 +38,7 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             uint specId = SpecializationMgr.GetSpecIdByGroup(pChar, (byte)specGroupId);
 
-            // check if new spec is primary or secondary
+            // Check if new spec is primary or secondary
             if (pChar.SpecGroupCount == 1 && pChar.PrimarySpec == 0)
             {
                 pChar.ActiveSpecGroup = 0;
@@ -56,7 +56,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             SendSpecializationSpells(ref session);
             HandleUpdateTalentData(ref session);
 
-            pChar.SetUpdateField<Int32>((int)PlayerFields.CurrentSpecID, (int)pChar.GetActiveSpecId());
+            pChar.SetUpdateField<int>((int)PlayerFields.CurrentSpecID, (int)pChar.GetActiveSpecId());
             ObjectHandler.HandleUpdateObjectValues(ref session);
 
             Log.Message(LogType.Debug, "Character (Guid: {0}) choosed specialization {1} for spec group {2}.", pChar.Guid, pChar.GetActiveSpecId(), pChar.ActiveSpecGroup);
@@ -83,7 +83,7 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             HandleUpdateTalentData(ref session);
 
-            pChar.SetUpdateField<Int32>((int)PlayerFields.SpellCritPercentage + 0, SpecializationMgr.GetUnspentTalentRowCount(pChar), 0);
+            pChar.SetUpdateField<int>((int)PlayerFields.SpellCritPercentage + 0, SpecializationMgr.GetUnspentTalentRowCount(pChar), 0);
             ObjectHandler.HandleUpdateObjectValues(ref session);
 
             foreach (var talentSpell in talentSpells)

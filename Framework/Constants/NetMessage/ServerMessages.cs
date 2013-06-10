@@ -37,7 +37,6 @@ namespace Framework.Constants.NetMessage
         Message14                                = 0x04E5,
         Message15                                = 0x052C,
         Message16                                = 0x053F,
-        Message17                                = 0x056D,
         Message18                                = 0x05A5,
         Message19                                = 0x083E,
         Message20                                = 0x0927,
@@ -54,7 +53,6 @@ namespace Framework.Constants.NetMessage
         Message31                                = 0x0DFE,
         Message32                                = 0x10ED,
         Message33                                = 0x1127,
-        Message34                                = 0x113C,
         Message35                                = 0x11EC,
         Message36                                = 0x142D,
         Message37                                = 0x1474,
@@ -430,7 +428,6 @@ namespace Framework.Constants.NetMessage
         BattlePetCageDateError                   = 0x10D4,
         DisplayPlayerChoice                      = 0x0C99,
         ShowZonesCheatResult                     = 0x0BC0,
-        TextEmote                                = 0x1185,
         PetGodMode                               = 0x0E99,
         TaxiNodeStatus                           = 0x06D0,
         ActivateTaxiReply                        = 0x06DD,
@@ -623,7 +620,6 @@ namespace Framework.Constants.NetMessage
         TalentsInvoluntarilyReset                = 0x0395,
         PageText                                 = 0x0BDD,
         DefenseMessage                           = 0x14D0,
-        StandStateUpdate                         = 0x1399,
         SetForcedReactions                       = 0x069D,
         SpellFailedOther                         = 0x04C9,
         GameObjectResetState                     = 0x06D5,
@@ -647,9 +643,6 @@ namespace Framework.Constants.NetMessage
         DebugServerGeo                           = 0x07D8,
         GmResurrectSuccess                       = 0x12C5,
         GmResurrectFailure                       = 0x11CD,
-        SetAIAnimKit                             = 0x13D0,
-        PlayOneShotAnimKit                       = 0x049C,
-        SetMovementAnimKit                       = 0x0099,
         SetMeleeAnimKit                          = 0x0FCD,
         SetAnimTier                              = 0x0785,
         SetProficiency                           = 0x00C1,
@@ -711,6 +704,16 @@ namespace Framework.Constants.NetMessage
         GuildEvent                               = 0x11CC,
         ArenaTeamEvent                           = 0x0A90,
         EnableHonorBuddyDetection                = 0x09D8,
+        #endregion
+
+        #region Emote
+        StandStateUpdate                         = 0x1399,
+        PlayOneShotAnimKit                       = 0x049C,
+        TextEmote                                = 0x1185,
+        PlayEmote                                = 0x056D,
+        PlayUnitEventSound                       = 0x113C,
+        SetAIAnimKit                             = 0x13D0,
+        SetMovementAnimKit                       = 0x0099,
         #endregion
 
         TransferInitiate                         = 0x4F57,

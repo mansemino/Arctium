@@ -72,7 +72,6 @@ namespace WorldServer.Game.Managers
             registeredRequests.TryAdd(_guid, DateTime.Now.AddSeconds(20));
         }
 
-
         public void Remove(ulong _guid)
         {
             DateTime time;

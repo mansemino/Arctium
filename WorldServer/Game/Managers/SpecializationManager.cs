@@ -15,13 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System.Collections.Generic;
+using System.Linq;
 using Framework.ClientDB;
 using Framework.ClientDB.Structures.Dbc;
 using Framework.Constants;
 using Framework.Database;
 using Framework.Singleton;
-using System.Collections.Generic;
-using System.Linq;
 using WorldServer.Game.WorldEntities;
 
 namespace WorldServer.Game.Managers

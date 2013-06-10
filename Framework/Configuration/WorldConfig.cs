@@ -49,5 +49,7 @@ namespace Framework.Configuration
         public static int MySqlMaxPoolSize = config.Read("MySql.MaxPoolSize", 150);
 
         public static LogType LogLevel = (LogType)config.Read<uint>("LogLevel", 0, true);
+
+        public static string Motd = config.Read("Motd", "Arctium MoP test\nWelcome to our MoP server test.\nYour development team =)");
     }
 }

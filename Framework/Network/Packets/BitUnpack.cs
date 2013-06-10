@@ -77,7 +77,7 @@ namespace Framework.Network.Packets
             return (T)Convert.ChangeType(returnValue, typeof(T), CultureInfo.InvariantCulture);
         }
 
-        public UInt64 GetPackedValue(byte[] mask, byte[] bytes)
+        public ulong GetPackedValue(byte[] mask, byte[] bytes)
         {
             bool[] valueMask = new bool[mask.Length];
             byte[] valueBytes = new byte[bytes.Length];

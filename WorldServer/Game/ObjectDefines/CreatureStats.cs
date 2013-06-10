@@ -22,21 +22,21 @@ namespace WorldServer.Game.ObjectDefines
 {
     public class CreatureStats
     {
-        public Int32 Id;
-        public String Name;
-        public String SubName;
-        public String IconName;
-        public List<Int32> Flag = new List<Int32>(2);
-        public Int32 Type;
-        public Int32 Family;
-        public Int32 Rank;
-        public List<Int32> QuestKillNpcId = new List<Int32>(2);
-        public List<Int32> DisplayInfoId = new List<Int32>(4);
-        public Single HealthModifier;
-        public Single PowerModifier;
-        public Byte RacialLeader;
-        public List<Int32> QuestItemId = new List<Int32>(6);
-        public Int32 MovementInfoId;
-        public Int32 ExpansionRequired;
+        public int Id;
+        public string Name;
+        public string SubName;
+        public string IconName;
+        public List<int> Flag = new List<int>(2);
+        public int Type;
+        public int Family;
+        public int Rank;
+        public List<int> QuestKillNpcId = new List<int>(2);
+        public List<int> DisplayInfoId = new List<int>(4);
+        public float HealthModifier;
+        public float PowerModifier;
+        public byte RacialLeader;
+        public List<int> QuestItemId = new List<int>(6);
+        public int MovementInfoId;
+        public int ExpansionRequired;
     }
 }

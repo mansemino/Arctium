@@ -15,15 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
 using Framework.Configuration;
 using Framework.Constants.Authentication;
 using Framework.Constants.NetMessage;
 using Framework.Database;
 using Framework.Network.Packets;
 using Framework.ObjectDefines;
-using System;
 using WorldServer.Network;
-using Framework.Logging;
 
 namespace WorldServer.Game.Packets.PacketHandler
 {
@@ -110,13 +109,13 @@ namespace WorldServer.Game.Packets.PacketHandler
                 session.Account = new Account()
                 {
                     Id         = result.Read<int>(0, "id"),
-                    Name       = result.Read<String>(0, "name"),
-                    Password   = result.Read<String>(0, "password"),
-                    SessionKey = result.Read<String>(0, "sessionkey"),
+                    Name       = result.Read<string>(0, "name"),
+                    Password   = result.Read<string>(0, "password"),
+                    SessionKey = result.Read<string>(0, "sessionkey"),
                     Expansion  = result.Read<byte>(0, "expansion"),
                     GMLevel    = result.Read<byte>(0, "gmlevel"),
-                    IP         = result.Read<String>(0, "ip"),
-                    Language   = result.Read<String>(0, "language")
+                    IP         = result.Read<string>(0, "ip"),
+                    Language   = result.Read<string>(0, "language")
                 };
 
             string K = session.Account.SessionKey;
@@ -146,18 +145,18 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             if (HasAccountData)
             {
-                BitPack.Write(0);                                  // Unknown, 5.0.4
-                BitPack.Write(0);                                  // Unknown, 5.3.0
+                BitPack.Write(0);                                  // Unknown
+                BitPack.Write(0);                                  // Unknown
                 BitPack.Write(realmRaceResult.Count, 23);          // Activation count for races
-                BitPack.Write(0);                                  // Unknown, 5.1.0
+                BitPack.Write(0);                                  // Unknown
                 BitPack.Write(0, 21);                              // Activate character template windows/button
                 
                 //if (HasCharacterTemplate)
                 //Write bits for char templates...
 
                 BitPack.Write(realmClassResult.Count, 23);         // Activation count for classes
-                BitPack.Write(0, 22);                              // Unknown, 5.3.0
-                BitPack.Write(0);                                  // Unknown2, 5.3.0
+                BitPack.Write(0, 22);                              // Unknown
+                BitPack.Write(0);                                  // Unknown2
             }
 
             BitPack.Flush();
@@ -194,7 +193,7 @@ namespace WorldServer.Game.Packets.PacketHandler
                 authResponse.WriteUInt8(session.Account.Expansion);
 
                 // Unknown Counter
-                // Write UInt32...
+                // Write uint...
 
                 authResponse.WriteUInt8(session.Account.Expansion);
             }

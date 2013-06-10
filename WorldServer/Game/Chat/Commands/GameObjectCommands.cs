@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Console;
+using Framework.Console.Commands;
 using Framework.ObjectDefines;
 using WorldServer.Game.Packets.PacketHandler;
 using WorldServer.Game.Spawns;

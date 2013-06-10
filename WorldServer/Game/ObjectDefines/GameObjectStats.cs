@@ -15,24 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Constants.GameObject;
 using System;
 using System.Collections.Generic;
+using Framework.Constants.GameObject;
 
 namespace WorldServer.Game.ObjectDefines
 {
     public class GameObjectStats
     {
-        public Int32 Id;
+        public int Id;
         public GameObjectType Type;
-        public Int32 Flags;
-        public Int32 DisplayInfoId;
-        public String Name;
-        public String IconName;
-        public String CastBarCaption;
-        public List<Int32> Data = new List<Int32>(32);
-        public Single Size;
-        public List<Int32> QuestItemId = new List<Int32>(6);
-        public Int32 ExpansionRequired;
+        public int Flags;
+        public int DisplayInfoId;
+        public string Name;
+        public string IconName;
+        public string CastBarCaption;
+        public List<int> Data = new List<int>(32);
+        public float Size;
+        public List<int> QuestItemId = new List<int>(6);
+        public int ExpansionRequired;
     }
 }

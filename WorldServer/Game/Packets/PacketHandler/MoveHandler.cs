@@ -15,11 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
 using Framework.Constants.Movement;
 using Framework.Constants.NetMessage;
 using Framework.Network.Packets;
 using Framework.ObjectDefines;
-using System;
 using WorldServer.Game.WorldEntities;
 using WorldServer.Network;
 
@@ -161,6 +161,9 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             var guid = BitConverter.ToUInt64(guidBytes, 0);
             HandleMoveUpdate(guid, movementValues, vector);
+
+            // Clear emote if needed
+            session.Character.setEmoteState();
         }
 
         public static void HandleMoveUpdate(ulong guid, ObjectMovementValues movementValues, Vector4 vector)
@@ -375,7 +378,6 @@ namespace WorldServer.Game.Packets.PacketHandler
             BitPack.WriteGuidMask(0);
             BitPack.Write(IsTransport);
 
-            // Unknown bits
             if (Unknown)
             {
                 BitPack.Write(0);

@@ -37,7 +37,7 @@ namespace Framework.Database
         {
             if (pooling)
             {
-                var pools = String.Format("Min Pool Size={0};Max Pool Size={1};", minPoolSize, maxPoolSize);
+                var pools = string.Format("Min Pool Size={0};Max Pool Size={1};", minPoolSize, maxPoolSize);
 
                 ConnectionString = "Server=" + host + ";User Id=" + user + ";Port=" + port + ";" +
                                    "Password=" + password + ";Database=" + database + ";Allow Zero Datetime=True;" +
@@ -151,9 +151,9 @@ namespace Framework.Database
                         int index = resultAsIndex ? i : j;
 
                         if (j == fieldCount - 1)
-                            sqlString.Append(String.Format(CultureInfo.GetCultureInfo("en-US").NumberFormat, "'{0}'", values[index]));
+                            sqlString.Append(string.Format(CultureInfo.GetCultureInfo("en-US").NumberFormat, "'{0}'", values[index]));
                         else
-                            sqlString.Append(String.Format(CultureInfo.GetCultureInfo("en-US").NumberFormat, "'{0}', ", values[index]));
+                            sqlString.Append(string.Format(CultureInfo.GetCultureInfo("en-US").NumberFormat, "'{0}', ", values[index]));
                     }
 
                     if (i == resultCount - 1)

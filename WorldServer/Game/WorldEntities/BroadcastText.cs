@@ -15,9 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Database;
 using System;
 using System.Collections.Generic;
+using Framework.Database;
 
 namespace WorldServer.Game.WorldEntities
 {
@@ -36,13 +36,13 @@ namespace WorldServer.Game.WorldEntities
 
             if (result.Count != 0)
             {
-                Id              = result.Read<Int32>(0, "Id");
-                Language        = result.Read<Int32>(0, "Language");
+                Id              = result.Read<int>(0, "Id");
+                Language        = result.Read<int>(0, "Language");
                 Text            = result.Read<string>(0, "Text");
                 AlternativeText = result.Read<string>(0, "AlternativeText");
 
                 for (int i = 0; i < Emotes.Capacity; i++)
-                    Emotes.Add(result.Read<Int32>(0, "Emote" + i));
+                    Emotes.Add(result.Read<int>(0, "Emote" + i));
             }
         }
     }

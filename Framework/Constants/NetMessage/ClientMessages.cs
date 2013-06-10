@@ -99,6 +99,11 @@ namespace Framework.Constants.NetMessage
         MoveDismissVehicle                         = 0x0A56,
         #endregion
 
+        #region Emote
+        CliStandStateChange                        = 0x1016,
+        CliTextEmote                               = 0x1444,
+        #endregion
+
         TransferInitiate                           = 0x4F57,
     }
 }

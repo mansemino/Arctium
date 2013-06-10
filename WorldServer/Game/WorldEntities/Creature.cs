@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Database;
 using System;
+using Framework.Database;
 using WorldServer.Game.ObjectDefines;
 
 namespace WorldServer.Game.WorldEntities
@@ -35,38 +35,38 @@ namespace WorldServer.Game.WorldEntities
             {
                 Stats = new CreatureStats();
 
-                Stats.Id       = result.Read<Int32>(0, "Id");
-                Stats.Name     = result.Read<String>(0, "Name");
-                Stats.SubName  = result.Read<String>(0, "SubName");
-                Stats.IconName = result.Read<String>(0, "IconName");
+                Stats.Id       = result.Read<int>(0, "Id");
+                Stats.Name     = result.Read<string>(0, "Name");
+                Stats.SubName  = result.Read<string>(0, "SubName");
+                Stats.IconName = result.Read<string>(0, "IconName");
 
                 for (int i = 0; i < Stats.Flag.Capacity; i++)
-                    Stats.Flag.Add(result.Read<Int32>(0, "Flag", i));
+                    Stats.Flag.Add(result.Read<int>(0, "Flag", i));
 
-                Stats.Type   = result.Read<Int32>(0, "Type");
-                Stats.Family = result.Read<Int32>(0, "Family");
-                Stats.Rank   = result.Read<Int32>(0, "Rank");
+                Stats.Type   = result.Read<int>(0, "Type");
+                Stats.Family = result.Read<int>(0, "Family");
+                Stats.Rank   = result.Read<int>(0, "Rank");
 
                 for (int i = 0; i < Stats.QuestKillNpcId.Capacity; i++)
-                    Stats.QuestKillNpcId.Add(result.Read<Int32>(0, "QuestKillNpcId", i));
+                    Stats.QuestKillNpcId.Add(result.Read<int>(0, "QuestKillNpcId", i));
 
                 for (int i = 0; i < Stats.DisplayInfoId.Capacity; i++)
-                    Stats.DisplayInfoId.Add(result.Read<Int32>(0, "DisplayInfoId", i));
+                    Stats.DisplayInfoId.Add(result.Read<int>(0, "DisplayInfoId", i));
 
-                Stats.HealthModifier = result.Read<Single>(0, "HealthModifier");
-                Stats.PowerModifier  = result.Read<Single>(0, "PowerModifier");
-                Stats.RacialLeader   = result.Read<Byte>(0, "RacialLeader");
+                Stats.HealthModifier = result.Read<float>(0, "HealthModifier");
+                Stats.PowerModifier  = result.Read<float>(0, "PowerModifier");
+                Stats.RacialLeader   = result.Read<byte>(0, "RacialLeader");
 
                 for (int i = 0; i < Stats.QuestItemId.Capacity; i++)
                 {
-                    var questItem = result.Read<Int32>(0, "QuestItemId", i);
+                    var questItem = result.Read<int>(0, "QuestItemId", i);
 
                     if (questItem != 0)
                         Stats.QuestItemId.Add(questItem);
                 }
 
-                Stats.MovementInfoId    = result.Read<Int32>(0, "MovementInfoId");
-                Stats.ExpansionRequired = result.Read<Int32>(0, "ExpansionRequired");
+                Stats.MovementInfoId    = result.Read<int>(0, "MovementInfoId");
+                Stats.ExpansionRequired = result.Read<int>(0, "ExpansionRequired");
             }
 
             result = DB.World.Select("SELECT * FROM creature_data WHERE id = ?", id);
@@ -75,14 +75,14 @@ namespace WorldServer.Game.WorldEntities
             {
                 Data = new CreatureData();
 
-                Data.Health     = result.Read<Int32>(0, "Health");
-                Data.Level      = result.Read<Byte>(0, "Level");
-                Data.Class      = result.Read<Byte>(0, "Class");
-                Data.Faction    = result.Read<Int32>(0, "Faction");
-                Data.Scale      = result.Read<Int32>(0, "Scale");
-                Data.UnitFlags  = result.Read<Int32>(0, "UnitFlags");
-                Data.UnitFlags2 = result.Read<Int32>(0, "UnitFlags2");
-                Data.NpcFlags   = result.Read<Int32>(0, "NpcFlags");
+                Data.Health     = result.Read<int>(0, "Health");
+                Data.Level      = result.Read<byte>(0, "Level");
+                Data.Class      = result.Read<byte>(0, "Class");
+                Data.Faction    = result.Read<int>(0, "Faction");
+                Data.Scale      = result.Read<int>(0, "Scale");
+                Data.UnitFlags  = result.Read<int>(0, "UnitFlags");
+                Data.UnitFlags2 = result.Read<int>(0, "UnitFlags2");
+                Data.NpcFlags   = result.Read<int>(0, "NpcFlags");
             }
         }
     }

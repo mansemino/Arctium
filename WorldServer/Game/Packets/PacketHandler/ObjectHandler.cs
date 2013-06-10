@@ -47,7 +47,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             session.Send(ref updateObject);
         }
 
-        public static void HandleUpdateObjectValues(ref WorldClass session, bool broadcast = false)
+        public static void HandleUpdateObjectValues(ref WorldClass session, bool broadcast = false, bool toself = true)
         {
             WorldObject character = session.Character;
             PacketWriter updateObject = new PacketWriter(ServerMessage.ObjectUpdate);
@@ -60,7 +60,8 @@ namespace WorldServer.Game.Packets.PacketHandler
             character.WriteUpdateFields(ref updateObject);
             character.WriteDynamicUpdateFields(ref updateObject);
 
-            session.Send(ref updateObject);
+            if (toself)
+                session.Send(ref updateObject);
 
             if (broadcast)
                 WorldMgr.SendToInRangeCharacter(character as Character, updateObject);

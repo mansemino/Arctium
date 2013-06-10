@@ -15,11 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Logging;
 using System;
 using System.Globalization;
+using Framework.Logging;
 
-namespace Framework.Console
+namespace Framework.Console.Commands
 {
     public class CommandParser
     {

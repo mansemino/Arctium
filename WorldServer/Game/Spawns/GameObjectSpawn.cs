@@ -15,23 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
 using Framework.Constants;
 using Framework.Constants.NetMessage;
 using Framework.Database;
 using Framework.Logging;
 using Framework.Network.Packets;
 using Framework.ObjectDefines;
-using System;
 using WorldServer.Game.WorldEntities;
 
 namespace WorldServer.Game.Spawns
 {
     public class GameObjectSpawn : WorldObject
     {
-        public Int32 Id;
-        public UInt32 FactionTemplate;
-        public Byte AnimProgress;
-        public Byte State;
+        public int Id;
+        public uint FactionTemplate;
+        public byte AnimProgress;
+        public byte State;
         public GameObject GameObject;
 
         public GameObjectSpawn(int updateLength = (int)GameObjectFields.End) : base(updateLength) { }
@@ -97,30 +97,30 @@ namespace WorldServer.Game.Spawns
         public override void SetUpdateFields()
         {
             // ObjectFields
-            SetUpdateField<UInt64>((int)ObjectFields.Guid, Guid);
-            SetUpdateField<UInt64>((int)ObjectFields.Data, 0);
-            SetUpdateField<Int32>((int)ObjectFields.Type, 0x21);
-            SetUpdateField<Int32>((int)ObjectFields.Entry, Id);
-            SetUpdateField<Single>((int)ObjectFields.Scale, GameObject.Stats.Size);
+            SetUpdateField<ulong>((int)ObjectFields.Guid, Guid);
+            SetUpdateField<ulong>((int)ObjectFields.Data, 0);
+            SetUpdateField<int>((int)ObjectFields.Type, 0x21);
+            SetUpdateField<int>((int)ObjectFields.Entry, Id);
+            SetUpdateField<float>((int)ObjectFields.Scale, GameObject.Stats.Size);
 
             // GameObjectFields
-            SetUpdateField<UInt64>((int)GameObjectFields.CreatedBy, 0);
-            SetUpdateField<Int32>((int)GameObjectFields.DisplayID, GameObject.Stats.DisplayInfoId);
-            SetUpdateField<Int32>((int)GameObjectFields.Flags, GameObject.Stats.Flags);
-            SetUpdateField<Single>((int)GameObjectFields.ParentRotation, 0);
-            SetUpdateField<Single>((int)GameObjectFields.ParentRotation + 1, 0);
-            SetUpdateField<Single>((int)GameObjectFields.ParentRotation + 2, 0);
-            SetUpdateField<Single>((int)GameObjectFields.ParentRotation + 3, 1);
-            SetUpdateField<Byte>((int)GameObjectFields.AnimProgress, AnimProgress);
-            SetUpdateField<Byte>((int)GameObjectFields.AnimProgress, 0, 1);
-            SetUpdateField<Byte>((int)GameObjectFields.AnimProgress, 255, 2);
-            SetUpdateField<Byte>((int)GameObjectFields.AnimProgress, 255, 3);
-            SetUpdateField<UInt32>((int)GameObjectFields.FactionTemplate, FactionTemplate);
-            SetUpdateField<Int32>((int)GameObjectFields.Level, 0);
-            SetUpdateField<Byte>((int)GameObjectFields.PercentHealth, State);
-            SetUpdateField<Byte>((int)GameObjectFields.PercentHealth, (byte)GameObject.Stats.Type, 1);
-            SetUpdateField<Byte>((int)GameObjectFields.PercentHealth, 0, 2);
-            SetUpdateField<Byte>((int)GameObjectFields.PercentHealth, 255, 3);
+            SetUpdateField<ulong>((int)GameObjectFields.CreatedBy, 0);
+            SetUpdateField<int>((int)GameObjectFields.DisplayID, GameObject.Stats.DisplayInfoId);
+            SetUpdateField<int>((int)GameObjectFields.Flags, GameObject.Stats.Flags);
+            SetUpdateField<float>((int)GameObjectFields.ParentRotation, 0);
+            SetUpdateField<float>((int)GameObjectFields.ParentRotation + 1, 0);
+            SetUpdateField<float>((int)GameObjectFields.ParentRotation + 2, 0);
+            SetUpdateField<float>((int)GameObjectFields.ParentRotation + 3, 1);
+            SetUpdateField<byte>((int)GameObjectFields.AnimProgress, AnimProgress);
+            SetUpdateField<byte>((int)GameObjectFields.AnimProgress, 0, 1);
+            SetUpdateField<byte>((int)GameObjectFields.AnimProgress, 255, 2);
+            SetUpdateField<byte>((int)GameObjectFields.AnimProgress, 255, 3);
+            SetUpdateField<uint>((int)GameObjectFields.FactionTemplate, FactionTemplate);
+            SetUpdateField<int>((int)GameObjectFields.Level, 0);
+            SetUpdateField<byte>((int)GameObjectFields.PercentHealth, State);
+            SetUpdateField<byte>((int)GameObjectFields.PercentHealth, (byte)GameObject.Stats.Type, 1);
+            SetUpdateField<byte>((int)GameObjectFields.PercentHealth, 0, 2);
+            SetUpdateField<byte>((int)GameObjectFields.PercentHealth, 255, 3);
         }
     }
 }

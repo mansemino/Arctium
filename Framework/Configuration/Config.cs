@@ -15,11 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Logging;
 using System;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using Framework.Logging;
 
 namespace Framework.Configuration
 {
@@ -44,7 +44,7 @@ namespace Framework.Configuration
         public T Read<T>(string name, T value, bool hex = false)
         {
             string nameValue = null;
-            T trueValue = (T)Convert.ChangeType(value, typeof(T), CultureInfo.GetCultureInfo("en-US"));
+            T trueValue = (T)Convert.ChangeType(value, typeof(T));
             int lineCounter = 0;
 
             try
@@ -63,11 +63,11 @@ namespace Framework.Configuration
             }
             catch
             {
-                Log.Message(LogType.Error, "Error in {0} in line {1}", ConfigFile, lineCounter.ToString(CultureInfo.GetCultureInfo("en-US")));
+                Log.Message(LogType.Error, "Error in {0} in line {1}", ConfigFile, lineCounter);
             }
 
             if (hex)
-                return (T)Convert.ChangeType(Convert.ToInt32(nameValue, 16), typeof(T), CultureInfo.GetCultureInfo("en-US"));
+                return (T)Convert.ChangeType(Convert.ToInt32(nameValue, 16), typeof(T));
 
             if (typeof(T) == typeof(bool))
             {
@@ -77,12 +77,12 @@ namespace Framework.Configuration
                     return (T)Convert.ChangeType(true, typeof(T));
                 else
                 {
-                    Log.Message(LogType.Error, "Error in {0} in line {1}", ConfigFile, lineCounter.ToString(CultureInfo.GetCultureInfo("en-US")));
+                    Log.Message(LogType.Error, "Error in {0} in line {1}", ConfigFile, lineCounter);
                     Log.Message(LogType.Error, "Use default value for boolean config option: {0}. Default: {1}", name, value);
                 }
             }
 
-            return (T)Convert.ChangeType(nameValue, typeof(T), CultureInfo.GetCultureInfo("en-US"));
+            return (T)Convert.ChangeType(nameValue, typeof(T));
         }
     }
 }

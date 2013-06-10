@@ -15,12 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Constants.NetMessage;
-using Framework.Logging;
-using Framework.Network.Packets;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Framework.Constants.NetMessage;
+using Framework.Logging;
+using Framework.Network.Packets;
 using WorldServer.Network;
 
 namespace WorldServer.Game.Packets

@@ -34,12 +34,12 @@ namespace Framework.Network.Packets
         byte BitValue { get; set; }
         bool flushed = false;
 
-        public UInt64 Guid { set { GuidBytes = BitConverter.GetBytes(value); } }
-        public UInt64 GuildGuid { set { GuildGuidBytes = BitConverter.GetBytes(value); } }
-        public UInt64 TargetGuid { set { TargetGuidBytes = BitConverter.GetBytes(value); } }
-        public UInt64 TransportGuid { set { TransportGuidBytes = BitConverter.GetBytes(value); } }
+        public ulong Guid { set { GuidBytes = BitConverter.GetBytes(value); } }
+        public ulong GuildGuid { set { GuildGuidBytes = BitConverter.GetBytes(value); } }
+        public ulong TargetGuid { set { TargetGuidBytes = BitConverter.GetBytes(value); } }
+        public ulong TransportGuid { set { TransportGuidBytes = BitConverter.GetBytes(value); } }
 
-        public BitPack(PacketWriter writer, UInt64 guid = 0, UInt64 guildGuid = 0, UInt64 targetGuid = 0, UInt64 transportGuid = 0)
+        public BitPack(PacketWriter writer, ulong guid = 0, ulong guildGuid = 0, ulong targetGuid = 0, ulong transportGuid = 0)
         {
             Guid = guid;
             GuildGuid = guildGuid;

@@ -17,26 +17,28 @@
     <OutputPath>..\Build\Debug_x64\</OutputPath>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <DefineConstants>DEBUG</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <PlatformTarget>x64</PlatformTarget>
     <OutputPath>..\Build\Release_x64\</OutputPath>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>..\Build\Debug_x86\</OutputPath>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <DefineConstants>DEBUG</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>..\Build\Release_x86\</OutputPath>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -68,6 +70,8 @@
     <Compile Include="ClientDB\Structures\Dbc\AreaTrigger.cs" />
     <Compile Include="ClientDB\Structures\Dbc\ChrClasses.cs" />
     <Compile Include="ClientDB\Structures\Dbc\ChrSpecialization.cs" />
+    <Compile Include="ClientDB\Structures\Dbc\Emotes.cs" />
+    <Compile Include="ClientDB\Structures\Dbc\EmotesText.cs" />
     <Compile Include="ClientDB\Structures\Dbc\NameGen.cs" />
     <Compile Include="ClientDB\Structures\Dbc\SpecializationSpells.cs" />
     <Compile Include="ClientDB\Structures\Dbc\Spell.cs" />
@@ -77,14 +81,14 @@
     <Compile Include="Configuration\Config.cs" />
     <Compile Include="Configuration\RealmConfig.cs" />
     <Compile Include="Configuration\WorldConfig.cs" />
-    <Compile Include="Console\Commands\CommandDefinitions.cs" />
-    <Compile Include="Console\CommandManager.cs" />
-    <Compile Include="Console\CommandParser.cs" />
-    <Compile Include="Console\Commands\AccountCommands.cs" />
+    <Compile Include="Console\Commands\CommandAttribute.cs" />
+    <Compile Include="Console\Commands\CommandManager.cs" />
+    <Compile Include="Console\Commands\CommandParser.cs" />
     <Compile Include="Constants\AccountDataTypes.cs" />
     <Compile Include="Constants\Authentication\AuthResults.cs" />
     <Compile Include="Constants\CharacterFlags.cs" />
     <Compile Include="Constants\Class.cs" />
+    <Compile Include="Constants\Creature\NpcFlags.cs" />
     <Compile Include="Constants\DBTypes.cs" />
     <Compile Include="Constants\GameObject\GameObjectType.cs" />
     <Compile Include="Constants\Guids\HighGuidMask.cs" />
@@ -152,7 +156,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ClientDB\Structures\Db2\" />
-    <Folder Include="Constants\Creature\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

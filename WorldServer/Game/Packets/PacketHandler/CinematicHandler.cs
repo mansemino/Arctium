@@ -15,11 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System.Linq;
 using Framework.ClientDB;
 using Framework.Constants.NetMessage;
 using Framework.Database;
 using Framework.Network.Packets;
-using System.Linq;
 using WorldServer.Game.WorldEntities;
 using WorldServer.Network;
 

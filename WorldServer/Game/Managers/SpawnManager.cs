@@ -15,14 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Database;
-using Framework.Logging;
-using Framework.ObjectDefines;
-using Framework.Singleton;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Framework.Database;
+using Framework.Logging;
+using Framework.ObjectDefines;
+using Framework.Singleton;
 using WorldServer.Game.Spawns;
 using WorldServer.Game.WorldEntities;
 
@@ -108,8 +108,8 @@ namespace WorldServer.Game.Managers
 
             Parallel.For(0, result.Count, (i, loop) =>
             {
-                var guid = result.Read<UInt64>(i, "Guid");
-                var id   = result.Read<Int32>(i, "Id");
+                var guid = result.Read<ulong>(i, "Guid");
+                var id   = result.Read<int>(i, "Id");
 
                 Creature data = Globals.DataMgr.FindCreature(id);
                 if (data == null)
@@ -122,14 +122,14 @@ namespace WorldServer.Game.Managers
                 {
                     Guid = guid,
                     Id   = id,    
-                    Map  = result.Read<UInt32>(i, "Map"),
+                    Map  = result.Read<uint>(i, "Map"),
 
                     Position = new Vector4()
                     {
-                        X = result.Read<Single>(i, "X"),
-                        Y = result.Read<Single>(i, "Y"),
-                        Z = result.Read<Single>(i, "Z"),
-                        O = result.Read<Single>(i, "O")
+                        X = result.Read<float>(i, "X"),
+                        Y = result.Read<float>(i, "Y"),
+                        Z = result.Read<float>(i, "Z"),
+                        O = result.Read<float>(i, "O")
                     }
                 };
 
@@ -164,8 +164,8 @@ namespace WorldServer.Game.Managers
 
             Parallel.For(0, result.Count, (i, loop) =>
             {
-                var guid = result.Read<UInt64>(i, "Guid");
-                var id = result.Read<Int32>(i, "Id");
+                var guid = result.Read<ulong>(i, "Guid");
+                var id = result.Read<int>(i, "Id");
 
                 GameObject data = Globals.DataMgr.FindGameObject(id);
                 if (data == null)
@@ -178,19 +178,19 @@ namespace WorldServer.Game.Managers
                 {
                     Guid = guid,
                     Id   = id,
-                    Map  = result.Read<UInt32>(i, "Map"),
+                    Map  = result.Read<uint>(i, "Map"),
 
                     Position = new Vector4()
                     {
-                        X = result.Read<Single>(i, "X"),
-                        Y = result.Read<Single>(i, "Y"),
-                        Z = result.Read<Single>(i, "Z"),
-                        O = result.Read<Single>(i, "O")
+                        X = result.Read<float>(i, "X"),
+                        Y = result.Read<float>(i, "Y"),
+                        Z = result.Read<float>(i, "Z"),
+                        O = result.Read<float>(i, "O")
                     },
 
-                    FactionTemplate = result.Read<UInt32>(i, "FactionTemplate"),
-                    AnimProgress    = result.Read<Byte>(i, "AnimProgress"),
-                    State           = result.Read<Byte>(i, "State"),
+                    FactionTemplate = result.Read<uint>(i, "FactionTemplate"),
+                    AnimProgress    = result.Read<byte>(i, "AnimProgress"),
+                    State           = result.Read<byte>(i, "State"),
                 };
 
                 spawn.CreateFullGuid();

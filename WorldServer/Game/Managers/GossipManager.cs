@@ -1,21 +1,21 @@
-﻿using Framework.Database;
+﻿using System;
+using System.Collections.Concurrent;
+using Framework.Database;
 using Framework.Logging;
 using Framework.Singleton;
-using System;
-using System.Collections.Concurrent;
 using WorldServer.Game.WorldEntities;
 
 namespace WorldServer.Game.Managers
 {
     public class GossipManager : SingletonBase<GossipManager>
     {
-        ConcurrentDictionary<UInt64, Gossip> CreatureGossips;
-        ConcurrentDictionary<UInt64, Gossip> GameObjectGossips;
+        ConcurrentDictionary<ulong, Gossip> CreatureGossips;
+        ConcurrentDictionary<ulong, Gossip> GameObjectGossips;
 
         GossipManager()
         {
-            CreatureGossips = new ConcurrentDictionary<UInt64, Gossip>();
-            GameObjectGossips = new ConcurrentDictionary<UInt64, Gossip>();
+            CreatureGossips = new ConcurrentDictionary<ulong, Gossip>();
+            GameObjectGossips = new ConcurrentDictionary<ulong, Gossip>();
 
             LoadGossips();
         }
@@ -59,27 +59,27 @@ namespace WorldServer.Game.Managers
 
             for (int i = 0; i < result.Count; i++)
             {
-                var guid       = result.Read<UInt64>(i, "Guid");
+                var guid       = result.Read<ulong>(i, "Guid");
 
                 var gossipData = new Gossip
                 {
-                    Id                  = result.Read<Int32>(i, "GossipDataId"),
-                    FriendshipFactionID = result.Read<Int32>(i, "FriendshipFactionID"),
-                    TextID              = result.Read<Int32>(i, "TextID"),
-                    OptionsCount        = result.Read<Int32>(i, "OptionsCount"),
-                    QuestsCount         = result.Read<Int32>(i, "QuestsCount")
+                    Id                  = result.Read<int>(i, "GossipDataId"),
+                    FriendshipFactionID = result.Read<int>(i, "FriendshipFactionID"),
+                    TextID              = result.Read<int>(i, "TextID"),
+                    OptionsCount        = result.Read<int>(i, "OptionsCount"),
+                    QuestsCount         = result.Read<int>(i, "QuestsCount")
                 };
 
                 gossipData.BroadCastText = new BroadcastText
                 {
-                    Id              = result.Read<Int32>(i, "BroadCastTextID"),
-                    Language        = result.Read<Int32>(i, "Language"),
+                    Id              = result.Read<int>(i, "BroadCastTextID"),
+                    Language        = result.Read<int>(i, "Language"),
                     Text            = result.Read<string>(i, "Text"),
                     AlternativeText = result.Read<string>(i, "AlternativeText")
                 };
 
                 for (int j = 0; j < gossipData.BroadCastText.Emotes.Capacity; j++)
-                    gossipData.BroadCastText.Emotes.Add(result.Read<Int32>(0, "Emote" + j));
+                    gossipData.BroadCastText.Emotes.Add(result.Read<int>(0, "Emote" + j));
 
                 CreatureGossips.TryAdd(guid, gossipData);
             }
@@ -94,27 +94,27 @@ namespace WorldServer.Game.Managers
 
             for (int i = 0; i < result.Count; i++)
             {
-                var guid       = result.Read<UInt64>(i, "Guid");
+                var guid       = result.Read<ulong>(i, "Guid");
                 
                  var gossipData = new Gossip
                 {
-                    Id                  = result.Read<Int32>(i, "GossipDataId"),
-                    FriendshipFactionID = result.Read<Int32>(i, "FriendshipFactionID"),
-                    TextID              = result.Read<Int32>(i, "TextID"),
-                    OptionsCount        = result.Read<Int32>(i, "OptionsCount"),
-                    QuestsCount         = result.Read<Int32>(i, "QuestsCount")
+                    Id                  = result.Read<int>(i, "GossipDataId"),
+                    FriendshipFactionID = result.Read<int>(i, "FriendshipFactionID"),
+                    TextID              = result.Read<int>(i, "TextID"),
+                    OptionsCount        = result.Read<int>(i, "OptionsCount"),
+                    QuestsCount         = result.Read<int>(i, "QuestsCount")
                 };
 
                 gossipData.BroadCastText = new BroadcastText
                 {
-                    Id              = result.Read<Int32>(i, "BroadCastTextID"),
-                    Language        = result.Read<Int32>(i, "Language"),
+                    Id              = result.Read<int>(i, "BroadCastTextID"),
+                    Language        = result.Read<int>(i, "Language"),
                     Text            = result.Read<string>(i, "Text"),
                     AlternativeText = result.Read<string>(i, "AlternativeText")
                 };
 
                 for (int j = 0; j < gossipData.BroadCastText.Emotes.Capacity; j++)
-                    gossipData.BroadCastText.Emotes.Add(result.Read<Int32>(0, "Emote" + j));
+                    gossipData.BroadCastText.Emotes.Add(result.Read<int>(0, "Emote" + j));
 
                 GameObjectGossips.TryAdd(guid, gossipData);
             }

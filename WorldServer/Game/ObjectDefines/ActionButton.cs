@@ -21,8 +21,8 @@ namespace WorldServer.Game.ObjectDefines
 {
     public class ActionButton
     {
-        public UInt64 Action;
-        public Byte SlotId;
-        public Byte SpecGroup;
+        public ulong Action;
+        public byte SlotId;
+        public byte SpecGroup;
     }
 }

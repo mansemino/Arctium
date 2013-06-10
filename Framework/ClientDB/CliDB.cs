@@ -15,10 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System.Collections.Generic;
 using Framework.ClientDB.Reader;
 using Framework.ClientDB.Structures.Dbc;
 using Framework.Logging;
-using System.Collections.Generic;
 
 namespace Framework.ClientDB
 {
@@ -38,6 +38,8 @@ namespace Framework.ClientDB
         public static List<AreaPOI> AreaPOI;
         public static List<AreaTrigger> AreaTrigger;
         public static List<WorldSafeLocs> WorldSafeLocs;
+        public static List<Emotes> Emotes;
+        public static List<EmotesText> EmotesText;
 
         public static void Initialize()
         {
@@ -55,6 +57,8 @@ namespace Framework.ClientDB
             AreaPOI              = DBReader.Read<AreaPOI>("AreaPOI.dbc");
             AreaTrigger          = DBReader.Read<AreaTrigger>("AreaTrigger.dbc");
             WorldSafeLocs        = DBReader.Read<WorldSafeLocs>("WorldSafeLocs.dbc");
+            Emotes               = DBReader.Read<Emotes>("Emotes.dbc");
+            EmotesText           = DBReader.Read<EmotesText>("EmotesText.dbc");
 
             Log.Message(LogType.Normal, "Loaded {0} CliDBs.", Count);
             Log.Message();

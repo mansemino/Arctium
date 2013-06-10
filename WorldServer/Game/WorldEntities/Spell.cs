@@ -22,9 +22,9 @@ namespace WorldServer.Game.WorldEntities
     public enum PlayerSpellState
     {
         Unchanged = 0,
-        Changed = 1,
-        New = 2,
-        Removed = 3,
+        Changed   = 1,
+        New       = 2,
+        Removed   = 3,
         Temporary = 4
     }
 

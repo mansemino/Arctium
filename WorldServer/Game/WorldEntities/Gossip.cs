@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Database;
 using System;
+using Framework.Database;
 
 namespace WorldServer.Game.WorldEntities
 {
@@ -38,10 +38,10 @@ namespace WorldServer.Game.WorldEntities
             if (result.Count != 0)
             {
                 Id                  = id;
-                FriendshipFactionID = result.Read<Int32>(0, "FriendshipFactionID");
-                TextID              = result.Read<Int32>(0, "TextID");
-                OptionsCount        = result.Read<Int32>(0, "OptionsCount");
-                QuestsCount         = result.Read<Int32>(0, "QuestsCount"); 
+                FriendshipFactionID = result.Read<int>(0, "FriendshipFactionID");
+                TextID              = result.Read<int>(0, "TextID");
+                OptionsCount        = result.Read<int>(0, "OptionsCount");
+                QuestsCount         = result.Read<int>(0, "QuestsCount"); 
             }
         }
     }

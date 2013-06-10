@@ -34,7 +34,6 @@ namespace WorldServer.Game
         public static WorldManager WorldMgr;
         public static LogoutManager LogOutMgr;
 
-
         public static void Initialize()
         {
             // Load dbc files.
@@ -51,7 +50,6 @@ namespace WorldServer.Game
             ObjectMgr         = ObjectManager.GetInstance();
             WorldMgr          = WorldManager.GetInstance();
             LogOutMgr         = LogoutManager.GetInstance();
-
         }
     }
 }

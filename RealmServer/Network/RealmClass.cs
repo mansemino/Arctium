@@ -15,19 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Constants.Authentication;
-using Framework.Cryptography;
-using Framework.Database;
-using Framework.Logging;
-using Framework.Network.Packets;
-using Framework.ObjectDefines;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net.Sockets;
 using System.Security.Cryptography;
-using System.Threading;
+using Framework.Constants.Authentication;
+using Framework.Cryptography;
+using Framework.Database;
+using Framework.Logging;
+using Framework.Network.Packets;
+using Framework.ObjectDefines;
 
 namespace Framework.Network.Realm
 {
@@ -101,14 +100,14 @@ namespace Framework.Network.Realm
                         return;
                     }
 
-                    account.Id = result.Read<Int32>(0, "id");
-                    account.Expansion = result.Read<Byte>(0, "expansion");
-                    account.SecurityFlags = result.Read<Byte>(0, "securityFlags");
+                    account.Id = result.Read<int>(0, "id");
+                    account.Expansion = result.Read<byte>(0, "expansion");
+                    account.SecurityFlags = result.Read<byte>(0, "securityFlags");
 
                     DB.Realms.Execute("UPDATE accounts SET ip = ?, language = ? WHERE id = ?", account.IP, account.Language, account.Id);
 
-                    var username = result.Read<String>(0, "name").ToUpperInvariant();
-                    var password = result.Read<String>(0, "password").ToUpperInvariant();
+                    var username = result.Read<string>(0, "name").ToUpper();
+                    var password = result.Read<string>(0, "password").ToUpper();
 
                     // WoW 5.3.0.16992
                     if (ClientBuild == 16992)
@@ -164,9 +163,9 @@ namespace Framework.Network.Realm
 
                 foreach (var b in SecureRemotePassword.K)
                     if (b < 0x10)
-                        account.SessionKey += "0" + String.Format(CultureInfo.InvariantCulture, "{0:X}", b);
+                        account.SessionKey += "0" + string.Format(CultureInfo.InvariantCulture, "{0:X}", b);
                     else
-                        account.SessionKey += String.Format(CultureInfo.InvariantCulture, "{0:X}", b);
+                        account.SessionKey += string.Format(CultureInfo.InvariantCulture, "{0:X}", b);
 
                 logonProof.WriteUInt8((byte)ClientLink.CMD_AUTH_LOGON_PROOF);
                 logonProof.WriteUInt8(0);

@@ -15,13 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
+using System.Threading;
 using Framework.Configuration;
 using Framework.Database;
 using Framework.Logging;
 using Framework.Network.Realm;
 using Framework.ObjectDefines;
-using System;
-using System.Threading;
 
 namespace RealmServer
 {

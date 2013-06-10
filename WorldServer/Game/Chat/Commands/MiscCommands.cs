@@ -15,10 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Configuration;
-using Framework.ObjectDefines;
 using System;
 using System.Text;
+using Framework.Configuration;
+using Framework.ObjectDefines;
 using WorldServer.Game.Packets.PacketHandler;
 using WorldServer.Network;
 
@@ -36,7 +36,7 @@ namespace WorldServer.Game.Chat.Commands
                 var helpAttribute = (ChatCommandAttribute[])command.Value.Method.GetCustomAttributes(typeof(ChatCommandAttribute), false);
                 foreach (var desc in helpAttribute)
                 {
-                    if (!String.IsNullOrEmpty(desc.Description))
+                    if (!string.IsNullOrEmpty(desc.Description))
                         commandList.AppendLine(WorldConfig.GMCommandStart + command.Key + " [" + desc.Description + "]");
                     else
                         commandList.AppendLine(WorldConfig.GMCommandStart + command.Key);

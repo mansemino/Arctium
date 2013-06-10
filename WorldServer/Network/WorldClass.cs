@@ -15,6 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
+using System.Collections;
+using System.Net;
+using System.Net.Sockets;
 using Framework.Constants.NetMessage;
 using Framework.Cryptography;
 using Framework.Database;
@@ -22,10 +26,6 @@ using Framework.Logging;
 using Framework.Logging.PacketLogging;
 using Framework.Network.Packets;
 using Framework.ObjectDefines;
-using System;
-using System.Collections;
-using System.Net;
-using System.Net.Sockets;
 using WorldServer.Game;
 using WorldServer.Game.Packets;
 using WorldServer.Game.WorldEntities;

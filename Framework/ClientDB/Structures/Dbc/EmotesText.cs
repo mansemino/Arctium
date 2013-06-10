@@ -14,14 +14,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
-namespace Framework.Console.Commands
+
+using Framework.ClientDB.CustomTypes;
+
+namespace Framework.ClientDB.Structures.Dbc
 {
-    public class CommandDefinitions
+    public class EmotesText
     {
-        public static void Initialize()
-        {
-            CommandManager.DefineCommand("caccount", AccountCommands.CreateAccount);
-        }
+        public uint ID;
+        public string Name;
+        public uint EmoteId;
+        public Unused Unknown1;
+        public Unused Unknown2;
+        public Unused Unknown3;
+        public Unused Unknown4;
+        public Unused Unknown5;
+        public Unused Unknown6;
+        public Unused Unknown7;
+        public Unused Unknown8;
+        public Unused Unknown9;
+        public Unused Unknown10;
+        public Unused Unknown11;
+        public Unused Unknown12;
+        public Unused Unknown13;
+        public Unused Unknown14;
+        public Unused Unknown15;
+        public Unused Unknown16;
     }
 }

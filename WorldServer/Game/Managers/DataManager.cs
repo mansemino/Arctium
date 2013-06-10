@@ -15,13 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
+using System.Collections.Concurrent;
+using System.Threading.Tasks;
 using Framework.Constants.GameObject;
 using Framework.Database;
 using Framework.Logging;
 using Framework.Singleton;
-using System;
-using System.Collections.Concurrent;
-using System.Threading.Tasks;
 using WorldServer.Game.ObjectDefines;
 using WorldServer.Game.WorldEntities;
 
@@ -29,13 +29,13 @@ namespace WorldServer.Game.Managers
 {
     public class DataManager : SingletonBase<DataManager>
     {
-        ConcurrentDictionary<Int32, Creature> Creatures;
-        ConcurrentDictionary<Int32, GameObject> GameObjects;
+        ConcurrentDictionary<int, Creature> Creatures;
+        ConcurrentDictionary<int, GameObject> GameObjects;
 
         DataManager()
         {
-            Creatures = new ConcurrentDictionary<Int32, Creature>();
-            GameObjects = new ConcurrentDictionary<Int32, GameObject>();
+            Creatures = new ConcurrentDictionary<int, Creature>();
+            GameObjects = new ConcurrentDictionary<int, GameObject>();
 
             Initialize();
         }
@@ -53,7 +53,7 @@ namespace WorldServer.Game.Managers
             return removedCreature;
         }
 
-        public ConcurrentDictionary<Int32, Creature> GetCreatures()
+        public ConcurrentDictionary<int, Creature> GetCreatures()
         {
             return Creatures;
         }
@@ -86,32 +86,32 @@ namespace WorldServer.Game.Managers
             {
                 CreatureStats Stats = new CreatureStats
                 {
-                    Id                = result.Read<Int32>(r, "Id"),
-                    Name              = result.Read<String>(r, "Name"),
-                    SubName           = result.Read<String>(r, "SubName"),
-                    IconName          = result.Read<String>(r, "IconName"),
-                    Type              = result.Read<Int32>(r, "Type"),
-                    Family            = result.Read<Int32>(r, "Family"),
-                    Rank              = result.Read<Int32>(r, "Rank"),
-                    HealthModifier    = result.Read<Single>(r, "HealthModifier"),
-                    PowerModifier     = result.Read<Single>(r, "PowerModifier"),
-                    RacialLeader      = result.Read<Byte>(r, "RacialLeader"),
-                    MovementInfoId    = result.Read<Int32>(r, "MovementInfoId"),
-                    ExpansionRequired = result.Read<Int32>(r, "ExpansionRequired")
+                    Id                = result.Read<int>(r, "Id"),
+                    Name              = result.Read<string>(r, "Name"),
+                    SubName           = result.Read<string>(r, "SubName"),
+                    IconName          = result.Read<string>(r, "IconName"),
+                    Type              = result.Read<int>(r, "Type"),
+                    Family            = result.Read<int>(r, "Family"),
+                    Rank              = result.Read<int>(r, "Rank"),
+                    HealthModifier    = result.Read<float>(r, "HealthModifier"),
+                    PowerModifier     = result.Read<float>(r, "PowerModifier"),
+                    RacialLeader      = result.Read<byte>(r, "RacialLeader"),
+                    MovementInfoId    = result.Read<int>(r, "MovementInfoId"),
+                    ExpansionRequired = result.Read<int>(r, "ExpansionRequired")
                 };
 
                 for (int i = 0; i < Stats.Flag.Capacity; i++)
-                    Stats.Flag.Add(result.Read<Int32>(r, "Flag", i));
+                    Stats.Flag.Add(result.Read<int>(r, "Flag", i));
 
                 for (int i = 0; i < Stats.QuestKillNpcId.Capacity; i++)
-                    Stats.QuestKillNpcId.Add(result.Read<Int32>(r, "QuestKillNpcId", i));
+                    Stats.QuestKillNpcId.Add(result.Read<int>(r, "QuestKillNpcId", i));
 
                 for (int i = 0; i < Stats.DisplayInfoId.Capacity; i++)
-                    Stats.DisplayInfoId.Add(result.Read<Int32>(r, "DisplayInfoId", i));
+                    Stats.DisplayInfoId.Add(result.Read<int>(r, "DisplayInfoId", i));
 
                 for (int i = 0; i < Stats.QuestItemId.Capacity; i++)
                 {
-                    var questItem = result.Read<Int32>(r, "QuestItemId", i);
+                    var questItem = result.Read<int>(r, "QuestItemId", i);
 
                     if (questItem != 0)
                         Stats.QuestItemId.Add(questItem);
@@ -121,14 +121,14 @@ namespace WorldServer.Game.Managers
                 {
                     Data = new CreatureData
                     {
-                        Health     = result.Read<Int32>(r, "Health"),
-                        Level      = result.Read<Byte>(r, "Level"),
-                        Class      = result.Read<Byte>(r, "Class"),
-                        Faction    = result.Read<Int32>(r, "Faction"),
-                        Scale      = result.Read<Int32>(r, "Scale"),
-                        UnitFlags  = result.Read<Int32>(r, "UnitFlags"),
-                        UnitFlags2 = result.Read<Int32>(r, "UnitFlags2"),
-                        NpcFlags   = result.Read<Int32>(r, "NpcFlags")
+                        Health     = result.Read<int>(r, "Health"),
+                        Level      = result.Read<byte>(r, "Level"),
+                        Class      = result.Read<byte>(r, "Class"),
+                        Faction    = result.Read<int>(r, "Faction"),
+                        Scale      = result.Read<int>(r, "Scale"),
+                        UnitFlags  = result.Read<int>(r, "UnitFlags"),
+                        UnitFlags2 = result.Read<int>(r, "UnitFlags2"),
+                        NpcFlags   = result.Read<int>(r, "NpcFlags")
                     },
 
                     Stats = Stats,
@@ -152,7 +152,7 @@ namespace WorldServer.Game.Managers
             return removedGameObject;
         }
 
-        public ConcurrentDictionary<Int32, GameObject> GetGameObjects()
+        public ConcurrentDictionary<int, GameObject> GetGameObjects()
         {
             return GameObjects;
         }
@@ -175,22 +175,22 @@ namespace WorldServer.Game.Managers
             {
                 GameObjectStats Stats = new GameObjectStats
                 {
-                    Id                = result.Read<Int32>(r, "Id"),
+                    Id                = result.Read<int>(r, "Id"),
                     Type              = result.Read<GameObjectType>(r, "Type"),
-                    DisplayInfoId     = result.Read<Int32>(r, "DisplayInfoId"),
-                    Name              = result.Read<String>(r, "Name"),
-                    IconName          = result.Read<String>(r, "IconName"),
-                    CastBarCaption    = result.Read<String>(r, "CastBarCaption"),
-                    Size              = result.Read<Single>(r, "Size"),
-                    ExpansionRequired = result.Read<Int32>(r, "ExpansionRequired")
+                    DisplayInfoId     = result.Read<int>(r, "DisplayInfoId"),
+                    Name              = result.Read<string>(r, "Name"),
+                    IconName          = result.Read<string>(r, "IconName"),
+                    CastBarCaption    = result.Read<string>(r, "CastBarCaption"),
+                    Size              = result.Read<float>(r, "Size"),
+                    ExpansionRequired = result.Read<int>(r, "ExpansionRequired")
                 };
 
                 for (int i = 0; i < Stats.Data.Capacity; i++)
-                    Stats.Data.Add(result.Read<Int32>(r, "Data", i));
+                    Stats.Data.Add(result.Read<int>(r, "Data", i));
 
                 for (int i = 0; i < Stats.QuestItemId.Capacity; i++)
                 {
-                    var questItem = result.Read<Int32>(r, "QuestItemId", i);
+                    var questItem = result.Read<int>(r, "QuestItemId", i);
 
                     if (questItem != 0)
                         Stats.QuestItemId.Add(questItem);

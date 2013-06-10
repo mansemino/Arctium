@@ -15,27 +15,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
+using System.Collections.Generic;
 using Framework.Database;
 using Framework.ObjectDefines;
 using Framework.Singleton;
-using System;
-using System.Collections.Generic;
 using WorldServer.Game.WorldEntities;
 
 namespace WorldServer.Game.Managers
 {
     public sealed class ObjectManager : SingletonBase<ObjectManager>
     {
-        Dictionary<UInt64, WorldObject> objectList;
+        Dictionary<ulong, WorldObject> objectList;
 
         ObjectManager()
         {
-            objectList = new Dictionary<UInt64, WorldObject>();
+            objectList = new Dictionary<ulong, WorldObject>();
         }
 
-        public WorldObject FindObject(UInt64 guid)
+        public WorldObject FindObject(ulong guid)
         {
-            foreach (KeyValuePair<UInt64, WorldObject> kvp in objectList)
+            foreach (KeyValuePair<ulong, WorldObject> kvp in objectList)
                 if (kvp.Key == guid)
                     return kvp.Value;
 

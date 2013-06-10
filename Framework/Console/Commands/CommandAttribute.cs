@@ -15,33 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Constants;
 using System;
 
-namespace Framework.ObjectDefines
+namespace Framework.Console.Commands
 {
-    public class SmartGuid
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+    public sealed class CommandAttribute : Attribute
     {
-        public ulong Guid { get; set; }
+        public string Command { get; set; }
+        public string Description { get; set; }
 
-        public SmartGuid(ulong low, int id, HighGuidType highType)
+        public CommandAttribute(string command, string description)
         {
-            Guid = (ulong)(low | ((ulong)id << 32) | (ulong)highType << 52);
-        }
-
-        public static HighGuidType GetGuidType(ulong guid)
-        {
-            return (HighGuidType)(guid >> 52);
-        }
-
-        public static int GetId(ulong guid)
-        {
-            return (int)((guid >> 32) & 0xFFFFF);
-        }
-
-        public static ulong GetGuid(ulong guid)
-        {
-            return guid & 0xFFFFFFFF;
+            Command = command;
+            Description = description;
         }
     }
 }
