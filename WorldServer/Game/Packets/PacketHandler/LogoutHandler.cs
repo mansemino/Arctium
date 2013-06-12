@@ -23,7 +23,7 @@ namespace WorldServer.Game.Packets.PacketHandler
 {
     public class LogoutHandler : Globals
     {
-        [Opcode(ClientMessage.CliLogoutRequest, "16992")]
+        [Opcode(ClientMessage.CliLogoutRequest, "17055")]
         public static void HandleLogoutRequest(ref PacketReader packet, ref WorldClass session)
         {
             LogOutMgr.Add(session.Character.Guid);
@@ -44,7 +44,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             RootHandler.HandleMoveRoot(ref session); 
         }
 
-        [Opcode(ClientMessage.CliLogoutCancel, "16992")]
+        [Opcode(ClientMessage.CliLogoutCancel, "17055")]
         public static void HandleLogoutCancel(ref PacketReader packet, ref WorldClass session)
         {
             LogOutMgr.Remove(session.Character.Guid);
@@ -61,7 +61,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             session.Character.setStandState(0);
         }
 
-        [Opcode(ClientMessage.CliLogoutInstant, "16992")]
+        [Opcode(ClientMessage.CliLogoutInstant, "17055")]
         public static void HandleLogoutInstant(ref PacketReader packet, ref WorldClass session)
         {
             var pChar = session.Character;

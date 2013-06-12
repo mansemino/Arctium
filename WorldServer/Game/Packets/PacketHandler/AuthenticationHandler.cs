@@ -28,7 +28,7 @@ namespace WorldServer.Game.Packets.PacketHandler
 {
     public class AuthenticationHandler : Globals
     {
-        [Opcode(ClientMessage.TransferInitiate, "16992")]
+        [Opcode(ClientMessage.TransferInitiate, "17055")]
         public static void HandleAuthChallenge(ref PacketReader packet, ref WorldClass session)
         {
             PacketWriter authChallenge = new PacketWriter(ServerMessage.AuthChallenge, true);
@@ -42,7 +42,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             session.Send(ref authChallenge);
         }
 
-        [Opcode(ClientMessage.AuthSession, "16992")]
+        [Opcode(ClientMessage.AuthSession, "17055")]
         public static void HandleAuthResponse(ref PacketReader packet, ref WorldClass session)
         {
             BitUnpack BitUnpack = new BitUnpack(packet);
