@@ -154,7 +154,6 @@ namespace WorldServer.Game.Packets.PacketHandler
                 var size = (uint)queryGameObjectResponse.BaseStream.Length - 13;
                 queryGameObjectResponse.WriteUInt32Pos(size, 9);
 
-                session.Send(ref queryGameObjectResponse);
             }
             else
                 Log.Message(LogType.Debug, "Gameobject (Id: {0}) not found.", id);
