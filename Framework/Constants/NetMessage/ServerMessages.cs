@@ -84,7 +84,7 @@ namespace Framework.Constants.NetMessage
         MoveUnsetCanFly                          = 0x034D,
         MoveSetWalkSpeed                         = 0x051D,
         MoveSetRunSpeed                          = 0x0758,
-        MoveSetSwimSpeed                         = 0x0905,
+        MoveSetSwimSpeed                         = 0x0904,
         MoveSetFlightSpeed                       = 0x0E54,
         MoveTeleport                             = 0x0C54,
         MoveUnroot                               = 0x0E50,

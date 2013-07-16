@@ -29,7 +29,7 @@ namespace WorldServer.Game.Packets.PacketHandler
 {
     public class SpecializationHandler : Globals
     {
-        [Opcode(ClientMessage.CliSetSpecialization, "17055")]
+        [Opcode(ClientMessage.CliSetSpecialization, "17128")]
         public static void HandleCliSetSpecialization(ref PacketReader packet, ref WorldClass session)
         {
             var pChar = session.Character;

@@ -133,7 +133,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             WorldMgr.SendToInRangeCharacter(session.Character, TextEmoteResponse);
         }
 
-        [Opcode(ClientMessage.CliTextEmote, "17055")]
+        [Opcode(ClientMessage.CliTextEmote, "17128")]
         public static void HandleEmote(ref PacketReader packet, ref WorldClass session)
         {
             BitUnpack GuidUnpacker = new BitUnpack(packet);
@@ -222,7 +222,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             }
         }
 
-        [Opcode(ClientMessage.CliChatMessageAfk, "17055")]
+        [Opcode(ClientMessage.CliChatMessageAfk, "17128")]
         public static void HandleChangePlayerAFKState(ref PacketReader packet, ref WorldClass session)
         {
             var pChar           = session.Character;
@@ -236,7 +236,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             pChar.setAfkState(afkText);
         }
 
-        [Opcode(ClientMessage.CliChatMessageDnd, "17055")]
+        [Opcode(ClientMessage.CliChatMessageDnd, "17128")]
         public static void HandleChangePlayerDNDState(ref PacketReader packet, ref WorldClass session)
         {
             var pChar           = session.Character;
@@ -250,7 +250,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             pChar.setDndState(dndText);
         }
 
-        [Opcode(ClientMessage.CliStandStateChange, "17055")]
+        [Opcode(ClientMessage.CliStandStateChange, "17128")]
         public static void HandleStandStateChange(ref PacketReader packet, ref WorldClass session)
         {
             int readedStatus = packet.ReadInt32();
