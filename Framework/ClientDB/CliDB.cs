@@ -35,6 +35,7 @@ namespace Framework.ClientDB
         public static List<SpellLevels> SpellLevels;
         public static List<Talent> Talent;
 
+        public static List<AreaTable> AreaTable;
         public static List<AreaPOI> AreaPOI;
         public static List<AreaTrigger> AreaTrigger;
         public static List<WorldSafeLocs> WorldSafeLocs;
@@ -54,6 +55,7 @@ namespace Framework.ClientDB
             SpellLevels          = DBReader.Read<SpellLevels>("SpellLevels.dbc");
             Talent               = DBReader.Read<Talent>("Talent.dbc");
 
+            AreaTable            = DBReader.Read<AreaTable>("AreaTable.dbc");
             AreaPOI              = DBReader.Read<AreaPOI>("AreaPOI.dbc");
             AreaTrigger          = DBReader.Read<AreaTrigger>("AreaTrigger.dbc");
             WorldSafeLocs        = DBReader.Read<WorldSafeLocs>("WorldSafeLocs.dbc");

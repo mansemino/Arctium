@@ -89,6 +89,7 @@ namespace Framework.Constants.NetMessage
         MoveTeleport                             = 0x0C54,
         MoveUnroot                               = 0x0E50,
         MoveRoot                                 = 0x0505,
+        MoveSetRotationSpeed                     = 0x0914,
         #endregion
 
         #region JAMClientQuest

@@ -24,9 +24,9 @@ namespace Framework.ClientDB.Structures.Dbc
         public uint Id;
         public uint DisplayPower;
         public uint PetNameToken;
-        public Unused Name;
-        public uint Unknown;
-        public uint Unknown2;
+        public string Name;
+        public string NameFemale;
+        public Unused NameMale;
         public Unused ClientFileName;
         public uint SpellClassSet;
         public uint Unknown3;

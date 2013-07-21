@@ -181,6 +181,39 @@ namespace WorldServer.Game.Chat.Commands
             ChatHandler.SendMessage(ref session, chatMessage);
         }
 
+        [ChatCommand("rotationspeed", "Usage: !rotationspeed #speed (Set the current rotation speed)")]
+        public static void RotationSpeed(string[] args, WorldClass session)
+        {
+            ChatMessageValues chatMessage = new ChatMessageValues(0, "");
+
+            if (args.Length == 1)
+                MoveHandler.HandleMoveSetRotationSpeed(ref session);
+            else
+            {
+                var speed = CommandParser.Read<float>(args, 1);
+
+                if (speed <= 50 && speed > 0)
+                {
+                    chatMessage.Message = "Rotation speed set to " + speed + "!";
+
+                    MoveHandler.HandleMoveSetRotationSpeed(ref session, speed);
+                    ChatHandler.SendMessage(ref session, chatMessage);
+                }
+                else
+                {
+                    chatMessage.Message = "Please enter a value between 0.0 and 50.0!";
+
+                    ChatHandler.SendMessage(ref session, chatMessage);
+                }
+
+                return;
+            }
+
+            chatMessage.Message = "Rotation speed set to default.";
+
+            ChatHandler.SendMessage(ref session, chatMessage);
+        }
+
         [ChatCommand("tele", "Usage: !tele [#x #y #z #o #map] or [#location] (Force teleport to a new location by coordinates or location)")]
         public static void Teleport(string[] args, WorldClass session)
         {
@@ -326,7 +359,6 @@ namespace WorldServer.Game.Chat.Commands
             if (DB.World.Execute("DELETE FROM teleport_locations WHERE location = ?", location))
                 ChatHandler.SendMessage(ref session, chatMessage);
         }
-
 
         [ChatCommand("telelist", "Usage: !telelist [#string] (List all the teleport locations [containing #string])")]
         public static void TeleList(string[] args, WorldClass session)

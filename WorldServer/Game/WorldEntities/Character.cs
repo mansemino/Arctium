@@ -266,5 +266,12 @@ namespace WorldServer.Game.WorldEntities
             if (broadcast)
                 ObjectHandler.HandleUpdateObjectValues(ref session, true, toself);
         }
+
+        // TODO: When Guilds are implemented, use GUID to get Guild Name.
+        // Used in WhoList
+        public string getGuildName()
+        {
+            return string.Empty;
+        }
     }
 }

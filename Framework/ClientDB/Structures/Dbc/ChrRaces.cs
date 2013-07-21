@@ -32,12 +32,12 @@ namespace Framework.ClientDB.Structures.Dbc
         public uint CreatureType;
         public uint ResSicknessSpellID;
         public uint SplashSoundID;
-        public uint ClientFileName; 
+        public string ClientFileName; 
         public uint CinematicSequence;
         public uint BaseFaction;
-        public Unused Name;
-        public uint Unknown;
-        public uint Unknown2;
+        public string Name;
+        public string NameFemale;
+        public Unused NameMale;
         public Unused MaleFacialHairs;
         public Unused FemaleFacialHairs;
         public Unused Hairs;

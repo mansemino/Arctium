@@ -36,6 +36,7 @@ namespace Framework.Constants.NetMessage
         #region Legacy
         ActivePlayer                               = 0x0704,
         ZoneUpdate                                 = 0x2000, // Not updated
+        CliWhoRequest                              = 0x0308,
         #endregion
 
         // Value > 0x1FFF are not known.

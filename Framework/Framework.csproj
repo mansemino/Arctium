@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="ClientDB\CustomTypes\Unused.cs" />
     <Compile Include="ClientDB\Structures\Dbc\AreaPOI.cs" />
+    <Compile Include="ClientDB\Structures\Dbc\AreaTable.cs" />
     <Compile Include="ClientDB\Structures\Dbc\AreaTrigger.cs" />
     <Compile Include="ClientDB\Structures\Dbc\ChrClasses.cs" />
     <Compile Include="ClientDB\Structures\Dbc\ChrSpecialization.cs" />

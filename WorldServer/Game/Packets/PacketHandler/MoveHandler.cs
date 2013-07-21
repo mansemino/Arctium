@@ -110,7 +110,6 @@ namespace WorldServer.Game.Packets.PacketHandler
             if (movementValues.HasMovementFlags)
                 movementValues.MovementFlags = (MovementFlag)BitUnpack.GetBits<uint>(30);
 
-
             if (movementValues.IsFallingOrJumping)
                 movementValues.HasJumpData = BitUnpack.GetBit();
 
@@ -332,6 +331,22 @@ namespace WorldServer.Game.Packets.PacketHandler
             BitPack.WriteGuidBytes(1, 2, 3, 6, 0, 4);
 
             session.Send(ref setFlightSpeed);
+        }
+
+        public static void HandleMoveSetRotationSpeed(ref WorldClass session, float speed = 7f)
+        {
+            PacketWriter packet = new PacketWriter(ServerMessage.MoveSetRotationSpeed);
+            BitPack BitPack = new BitPack(packet, session.Character.Guid);
+
+            BitPack.WriteGuidMask(5, 3, 7, 6, 2, 0, 4, 1);
+            BitPack.Flush();
+
+            packet.WriteFloat(speed);
+            packet.WriteUInt32(0);
+
+            BitPack.WriteGuidBytes(3, 7, 6, 0, 4, 5, 2, 1);
+
+            session.Send(ref packet);
         }
 
         public static void HandleMoveSetCanFly(ref WorldClass session)
