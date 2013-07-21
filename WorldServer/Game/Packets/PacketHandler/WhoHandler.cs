@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Framework.Configuration;
 using Framework.Constants;
 using Framework.Constants.NetMessage;
 using Framework.Logging;
@@ -84,7 +85,7 @@ namespace WorldServer.Game.Packets.PacketHandler
                 foreach (KeyValuePair<ulong, WorldClass> _session in Globals.WorldMgr.Sessions)
                 {
                     charactersList.Add(_session.Value.Character);
-                    if (charactersList.Count >= 49)
+                    if (charactersList.Count >= 50)
                         break;
                 }
             else 
@@ -125,7 +126,7 @@ namespace WorldServer.Game.Packets.PacketHandler
                         if (allStringsFound)
                         {
                             charactersList.Add(character);
-                            maxResultsReached = (charactersList.Count >= 49);
+                            maxResultsReached = (charactersList.Count >= 50);
                         }
                     }
                 }
@@ -153,7 +154,7 @@ namespace WorldServer.Game.Packets.PacketHandler
                     whoPacket.WriteUInt32(character.Zone);
                     whoPacket.WriteString(character.getGuildName(), false);
                     whoPacket.WriteUInt32(character.Class);
-                    whoPacket.WriteUInt32(0x03060003); // Flags
+                    whoPacket.WriteUInt32(WorldConfig.RealmId); // atm, only one realm is supported
                     whoPacket.WriteUInt32(character.Race);
                     whoPacket.WriteUInt32(character.Level);
                     whoPacket.WriteUInt8(character.Gender);
