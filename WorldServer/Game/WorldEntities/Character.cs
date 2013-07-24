@@ -31,35 +31,36 @@ namespace WorldServer.Game.WorldEntities
 {
     public class Character : WorldObject
     {
-        public uint AccountId;
+        public uint   AccountId;
         public string Name;
-        public byte Race;
-        public byte Class;
-        public byte Gender;
-        public byte Skin;
-        public byte Face;
-        public byte HairStyle;
-        public byte HairColor;
-        public byte FacialHair;
-        public byte Level;
-        public uint Zone;
-        public ulong GuildGuid;
-        public uint PetDisplayInfo;
-        public uint PetLevel;
-        public uint PetFamily;
-        public uint CharacterFlags;
-        public uint CustomizeFlags;
-        public bool LoginCinematic;
-        public byte SpecGroupCount;
-        public byte ActiveSpecGroup;
-        public uint PrimarySpec;
-        public uint SecondarySpec;
-        public bool UnitIsAfk;
+        public byte   Race;
+        public byte   Class;
+        public byte   Gender;
+        public byte   Skin;
+        public byte   Face;
+        public byte   HairStyle;
+        public byte   HairColor;
+        public byte   FacialHair;
+        public byte   Level;
+        public uint   Zone;
+        public ulong  GuildGuid;
+        public uint   PetDisplayInfo;
+        public uint   PetLevel;
+        public uint   PetFamily;
+        public uint   CharacterFlags;
+        public uint   CustomizeFlags;
+        public bool   LoginCinematic;
+        public byte   SpecGroupCount;
+        public byte   ActiveSpecGroup;
+        public uint   PrimarySpec;
+        public uint   SecondarySpec;
+        public bool   UnitIsAfk;
         public string UnitIsAfkMessage;
-        public bool UnitIsDnd;
+        public bool   UnitIsDnd;
         public string UnitIsDndMessage;
-        public bool UnitHasEmote;
-        public int UnitStandState;
+        public bool   UnitHasEmote;
+        public int    UnitStandState;
+        public byte   UnitFaction; // 0 - both (pandaren low), 1 - alliance, 2 - horde
 
         public Dictionary<ulong, WorldObject> InRangeObjects = new Dictionary<ulong, WorldObject>();
 
@@ -108,6 +109,19 @@ namespace WorldServer.Game.WorldEntities
             UnitIsDndMessage = "";
             UnitStandState   = 0;
 
+            // TODO:
+            // Change faction management based on DB (pandarens change faction from 24 (common) to 25 (alliance) or 26 (horde) after complete their mission)
+            uint MASKALLIANCE      = 0x0240089A;
+            uint MASKHORDE         = 0x04000764;
+            uint MASKCOMMONPANDA   = 0x01000000;
+
+            uint playerFactionMask = ((uint)1 << Race);
+
+            if ((playerFactionMask & MASKALLIANCE) != 0)            UnitFaction = 1;
+            else if ((playerFactionMask & MASKHORDE) != 0)          UnitFaction = 2;
+            else if ((playerFactionMask & MASKCOMMONPANDA) != 0)    UnitFaction = 0;
+            else UnitFaction = 3; // wtf? This can't happen
+                        
             Globals.SpecializationMgr.LoadTalents(this);
             Globals.SpellMgr.LoadSpells(this);
             Globals.SkillMgr.LoadSkills(this);

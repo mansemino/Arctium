@@ -1,17 +1,28 @@
-﻿using System;
+﻿/*
+ * Copyright (C) 2012-2013 Arctium <http://arctium.org>
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Framework.Configuration;
-using Framework.Constants;
 using Framework.Constants.NetMessage;
 using Framework.Logging;
 using Framework.Network.Packets;
-using WorldServer.Game.ObjectDefines;
 using WorldServer.Network;
-using Framework.Database;
-using Framework.ObjectDefines;
 using WorldServer.Game.WorldEntities;
 using Framework.ClientDB;
 using Framework.ClientDB.Structures.Dbc;
@@ -25,20 +36,20 @@ namespace WorldServer.Game.Packets.PacketHandler
         {
             List<string> stringList = new List<string>();
             List<uint> lengthList   = new List<uint>();
-            List<uint> intList      = new List<uint>();
+            List<uint> zoneList     = new List<uint>();
             string name             = "";
             string guildName        = "";
 
             BitUnpack bitunpack     = new BitUnpack(packet);
 
-            var skip        = packet.ReadUInt32();
+            var classMask   = packet.ReadUInt32();
 
             byte byteFlag   = packet.ReadByte();
 
-            var levelBackup = packet.ReadUInt32();
-            skip            = packet.ReadUInt32();
+            var maxLevel    = packet.ReadUInt32();
+            var raceMask    = packet.ReadUInt32();
             var intFlag     = packet.ReadUInt32();
-            var level       = packet.ReadUInt32();
+            var minLevel    = packet.ReadUInt32();
 
             var nameLength  = bitunpack.GetBits<uint>(6);
             var textCounter = bitunpack.GetBits<byte>(3);
@@ -50,8 +61,8 @@ namespace WorldServer.Game.Packets.PacketHandler
                     lengthList.Add(bitunpack.GetBits<uint>(7));
             }
 
-            var intCounter = bitunpack.GetBits<byte>(4);
-            var boolFalse = bitunpack.GetBit();
+            var zoneCounter = bitunpack.GetBits<byte>(4);
+            var boolFalse   = bitunpack.GetBit();
 
             if (textCounter > 0)
             {
@@ -65,30 +76,48 @@ namespace WorldServer.Game.Packets.PacketHandler
             if (guildLength > 0)
                 guildName = packet.ReadString(guildLength).ToLower();
 
-            if (intCounter > 0)
+            if (zoneCounter > 0)
             {
-                for (var ctr = 0; ctr < intCounter; ctr++)
-                    intList.Add(packet.ReadUInt32());
+                for (var ctr = 0; ctr < zoneCounter; ctr++)
+                    zoneList.Add(packet.ReadUInt32());
             }
 
-            List<Character> charactersList = new List<Character>();
+            List<Character> charactersList  = new List<Character>();
+            bool maxResultsReached          = false;
 
-            bool useLevel           = (level == levelBackup);
+            // Let's see if special filters or general search
             bool useName            = (name.Length > 0);
             bool useGuild           = (guildName.Length > 0);
-            bool maxResultsReached  = false;
-            string allStringsToSearchIn;
-            bool allStringsFound;
+            bool useRace            = (raceMask != 0xFFFFFFFF);
+            bool useClass           = (classMask != 0xFFFFFFFF);
+            bool useZone            = (zoneCounter > 0);
 
-            // If not criteria, add char
-            if (!useLevel && !useName && !useGuild && (stringList.Count == 0))
+            bool specialSearch      = (useName || useGuild || useRace || useClass || useZone);
+            bool generalSearch      = (!specialSearch && (textCounter > 0));
+            bool allSearch          = (!specialSearch && !generalSearch);
+
+            var me                  = session.Character;
+
+            // If allSearch (take only characters of same faction)
+            if (allSearch)
+            {
                 foreach (KeyValuePair<ulong, WorldClass> _session in Globals.WorldMgr.Sessions)
                 {
-                    charactersList.Add(_session.Value.Character);
+                    var character = _session.Value.Character;
+
+                    if ((me.UnitFaction == character.UnitFaction) && (character.Level >= minLevel) && (character.Level <= maxLevel))
+                        charactersList.Add(character);
+
                     if (charactersList.Count >= 50)
                         break;
                 }
-            else 
+            }
+            // If strings to search are given, use them in all search fields (take only characters of same faction)
+            else if (generalSearch)
+            {
+                string allStringsToSearchIn;
+                bool allStringsFound;
+
                 foreach (KeyValuePair<ulong, WorldClass> _session in Globals.WorldMgr.Sessions)
                 {
                     if (maxResultsReached)
@@ -98,7 +127,8 @@ namespace WorldServer.Game.Packets.PacketHandler
 
                     // Check if the "fixed" values match or the aren't needed
                     if (
-                        ((useLevel && character.Level == level) || !useLevel ) &&
+                        (me.UnitFaction == character.UnitFaction) &&
+                        ((character.Level >= minLevel) && (character.Level <= maxLevel)) &&
                         ((useName && character.Name.ToLower().Contains(name)) || !useName) && 
                         ((useGuild && character.getGuildName().ToLower().Contains(guildName)) || !useGuild)
                         )
@@ -108,7 +138,7 @@ namespace WorldServer.Game.Packets.PacketHandler
                         var chrClass    = CliDB.ChrClasses.SingleOrDefault(n => n.Id == character.Class);
                         var chrArea     = CliDB.AreaTable.SingleOrDefault(n => n.Id == character.Zone);
                             
-                        // We take all the strings for the character and we'll check if all strings are on it
+                        // We take all the used strings for the character and we'll check if all texts of the array are on it
                         allStringsToSearchIn = character.Name.ToLower() + // 
                             character.getGuildName().ToLower() + //
                             chrRace.Name.ToString().ToLower() + chrRace.NameFemale.ToString().ToLower() + //
@@ -130,6 +160,58 @@ namespace WorldServer.Game.Packets.PacketHandler
                         }
                     }
                 }
+            }
+            else if (specialSearch)
+            {
+                foreach (KeyValuePair<ulong, WorldClass> _session in Globals.WorldMgr.Sessions)
+                {
+                    if (maxResultsReached)
+                        break;
+
+                    var character = _session.Value.Character;
+
+                    if (
+                        (me.UnitFaction == character.UnitFaction) &&
+                        (character.Level >= minLevel) && (character.Level <= maxLevel) &&
+                        ((!useRace) || (useRace && ((((uint)1 << character.Race) & raceMask) != 0))) &&
+                        ((!useClass) || (useClass && ((((uint)1 << character.Class) & classMask) != 0))) &&
+                        ((!useName) || (useName && character.Name.ToLower().Contains(name))) &&
+                        ((!useGuild) || (useGuild && character.getGuildName().ToLower().Contains(guildName)))
+                        )
+                    {
+                        // Let's check for the zones. If not given, great...
+                        if (!useZone)
+                        {
+                            charactersList.Add(character);
+                            maxResultsReached = (charactersList.Count >= 50);
+                        }
+                        else
+                        {
+                            // If zones given, then check if the character is on any of them
+                            bool found = false;
+                            foreach (uint zone in zoneList)
+                            {
+                                if (zone == character.Zone)
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            // is it? then add it to the list...
+                            if (found)
+                            {
+                                charactersList.Add(character);
+                                maxResultsReached = (charactersList.Count >= 50);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Log.Message(LogType.Debug, "WhoList: Wrong condition reached.");
+                return;
+            }
             
             PacketWriter whoPacket = new PacketWriter(ServerMessage.Who);
             BitPack bitpack = new BitPack(whoPacket);
