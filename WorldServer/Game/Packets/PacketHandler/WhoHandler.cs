@@ -128,9 +128,7 @@ namespace WorldServer.Game.Packets.PacketHandler
                     // Check if the "fixed" values match or the aren't needed
                     if (
                         (me.UnitFaction == character.UnitFaction) &&
-                        ((character.Level >= minLevel) && (character.Level <= maxLevel)) &&
-                        ((useName && character.Name.ToLower().Contains(name)) || !useName) && 
-                        ((useGuild && character.getGuildName().ToLower().Contains(guildName)) || !useGuild)
+                        ((character.Level >= minLevel) && (character.Level <= maxLevel))
                         )
                     {
                         // We're going to look for all possible texts; For that, let's use this trick
