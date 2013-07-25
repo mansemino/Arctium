@@ -83,6 +83,7 @@
     <Compile Include="Game\ObjectDefines\CreatureStats.cs" />
     <Compile Include="Game\ObjectDefines\GameObjectStats.cs" />
     <Compile Include="Game\ObjectDefines\Talent.cs" />
+    <Compile Include="Game\Packets\PacketHandler\AddonHandler.cs" />
     <Compile Include="Game\Packets\PacketHandler\AuthenticationHandler.cs" />
     <Compile Include="Game\Packets\PacketHandler\CacheHandler.cs" />
     <Compile Include="Game\Packets\PacketHandler\CharacterHandler.cs" />

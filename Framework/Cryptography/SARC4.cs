@@ -19,7 +19,7 @@ using System;
 
 namespace Framework.Cryptography
 {
-    public sealed class SARC4 : IDisposable
+    public sealed class SARC4
     {
         internal byte[] S;
         byte tmp, tmp2;
@@ -65,9 +65,5 @@ namespace Framework.Cryptography
             }
         }
 
-        public void Dispose()
-        {
-            GC.SuppressFinalize(this);
-        }
     }
 }

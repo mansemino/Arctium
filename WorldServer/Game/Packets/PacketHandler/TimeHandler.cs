@@ -57,7 +57,7 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             session.Send(ref realmSplit);
 
-            AddonMgr.WriteAddonData(ref session);
+            AddonHandler.WriteAddonData(ref session);
         }
 
         public static void HandleLoginSetTimeSpeed(ref WorldClass session)

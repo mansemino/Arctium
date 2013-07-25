@@ -35,7 +35,7 @@ namespace Framework.Network.Packets
             if (worldPacket)
             {
                 ushort size = this.Read<ushort>();
-                Opcode = (ClientMessage)this.ReadUInt16();
+                Opcode = (ClientMessage)this.Read<ushort>();
 
                 if (Opcode == ClientMessage.TransferInitiate)
                     Size = (ushort)((size % 0x100) + (size / 0x100));

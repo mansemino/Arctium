@@ -76,12 +76,8 @@ namespace Framework.Cryptography
 
         public void Dispose()
         {
-            SARC4Encrypt.Dispose();
-            SARC4Decrypt.Dispose();
             DecryptSHA1.Dispose();
             EncryptSHA1.Dispose();
-
-            GC.SuppressFinalize(this);
 
             IsInitialized = false;
         }

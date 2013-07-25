@@ -30,7 +30,6 @@ namespace Framework.ObjectDefines
         public uint CRC { get; set; }               // The CRC for the addon (4 bytes)
         public string UrlString { get; set; }       // The url string for the addon. 256 bytes
         public byte [] PUBData { get; set; }        // PUB data to send. 256 bytes
-                                                    // Each addon block weights 524 bytes on client
-        public short Id { get; set; }               // Id into DB for the addon readed
+                                                    // Each addon block weights 524 bytes on client.
     }
 }

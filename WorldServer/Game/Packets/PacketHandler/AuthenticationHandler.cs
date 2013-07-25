@@ -55,52 +55,50 @@ namespace WorldServer.Game.Packets.PacketHandler
 	        uint        playerData7, playerData8;       // this[52], this[56]
 	        byte []     playerData9 = new byte[2];      // this[60], this[61]
 	        ulong       playerData11;                   // this[64], this[68]
+            int         addonPackedSize;
+            int         addonUnpackedSize;
 
-            skipBytes         = packet.ReadUInt16();
-            playerData1       = packet.ReadUInt32();
-            authChallenge[8]  = packet.ReadByte();
-            authChallenge[13] = packet.ReadByte();
-            authChallenge[3]  = packet.ReadByte();
-            playerData5       = packet.ReadUInt32();
-            authChallenge[6]  = packet.ReadByte();
-            clientBuild       = packet.ReadUInt16();
-            authChallenge[2]  = packet.ReadByte();
-            authChallenge[0]  = packet.ReadByte();
-            authChallenge[7]  = packet.ReadByte();
-            authChallenge[11] = packet.ReadByte();
-            playerData8       = packet.ReadUInt32();
-            authChallenge[5]  = packet.ReadByte();
-            authChallenge[15] = packet.ReadByte();
-            authChallenge[14] = packet.ReadByte();
-            authChallenge[12] = packet.ReadByte();
-            playerData11      = packet.ReadUInt64();       
-            playerData9[1]    = packet.ReadByte();
-            playerData7       = packet.ReadUInt32();
-            playerData4       = packet.ReadUInt32();
-            authChallenge[1]  = packet.ReadByte();
-            authChallenge[9]  = packet.ReadByte();
-            authChallenge[4]  = packet.ReadByte();
-            authChallenge[17] = packet.ReadByte();
-            authChallenge[16] = packet.ReadByte();
-            authChallenge[19] = packet.ReadByte();
-            authChallenge[18] = packet.ReadByte();
-            authChallenge[10] = packet.ReadByte();
-            playerData9[0]    = packet.ReadByte();
+            skipBytes           = packet.Read<ushort>();
+            playerData1         = packet.Read<uint>();
+            authChallenge[8]    = packet.Read<byte>();
+            authChallenge[13]   = packet.Read<byte>();
+            authChallenge[3]    = packet.Read<byte>();
+            playerData5         = packet.Read<uint>();
+            authChallenge[6]    = packet.Read<byte>();
+            clientBuild         = packet.Read<ushort>();
+            authChallenge[2]    = packet.Read<byte>();
+            authChallenge[0]    = packet.Read<byte>();
+            authChallenge[7]    = packet.Read<byte>();
+            authChallenge[11]   = packet.Read<byte>();
+            playerData8         = packet.Read<uint>();
+            authChallenge[5]    = packet.Read<byte>();
+            authChallenge[15]   = packet.Read<byte>();
+            authChallenge[14]   = packet.Read<byte>();
+            authChallenge[12]   = packet.Read<byte>();
+            playerData11        = packet.Read<ulong>();
+            playerData9[1]      = packet.Read<byte>();
+            playerData7         = packet.Read<uint>();
+            playerData4         = packet.Read<uint>();
+            authChallenge[1]    = packet.Read<byte>();
+            authChallenge[9]    = packet.Read<byte>();
+            authChallenge[4]    = packet.Read<byte>();
+            authChallenge[17]   = packet.Read<byte>();
+            authChallenge[16]   = packet.Read<byte>();
+            authChallenge[19]   = packet.Read<byte>();
+            authChallenge[18]   = packet.Read<byte>();
+            authChallenge[10]   = packet.Read<byte>();
+            playerData9[0]      = packet.Read<byte>();
 
-            // packet.Skip(54);
+            addonPackedSize     = packet.Read<int>();
+            addonUnpackedSize   = packet.Read<int>();
 
-            int addonPackedSize     = packet.Read<int>();
-            int addonUnpackedSize   = packet.Read<int>();
+            byte[] packedAddon  = packet.ReadBytes(addonPackedSize - 4);
+            AddonHandler.ReadAddonData(packedAddon, addonUnpackedSize, ref session);
 
-            byte[] packedAddon = packet.ReadBytes(addonPackedSize - 4);
-            AddonMgr.ReadAddonData(packedAddon, addonUnpackedSize, ref session);
+            bool aBit           = BitUnpack.GetBit(); // this[72]
 
-            // packet.Skip(addonSize);
-
-            bool aBit = BitUnpack.GetBit(); // this[72]
-
-            uint nameLength = BitUnpack.GetBits<uint>(11);
-            string accountName = packet.ReadString(nameLength);
+            uint nameLength     = BitUnpack.GetBits<uint>(11);
+            string accountName  = packet.ReadString(nameLength);
 
             SQLResult result = DB.Realms.Select("SELECT * FROM accounts WHERE name = ?", accountName);
             if (result.Count == 0)

@@ -25,8 +25,8 @@ namespace WorldServer.Game.Packets.PacketHandler
     {
         public static void HandleMoveRoot(ref WorldClass session)
         {
-            PacketWriter moveRoot = new PacketWriter(ServerMessage.MoveRoot);
-            BitPack BitPack = new BitPack(moveRoot, session.Character.Guid);
+            PacketWriter moveRoot   = new PacketWriter(ServerMessage.MoveRoot);
+            BitPack BitPack         = new BitPack(moveRoot, session.Character.Guid);
 
             BitPack.WriteGuidMask(2, 5, 0, 7, 3, 6, 4, 1);
             BitPack.Flush();
@@ -41,7 +41,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         public static void HandleMoveUnroot(ref WorldClass session)
         {
             PacketWriter moveUnroot = new PacketWriter(ServerMessage.MoveUnroot);
-            BitPack BitPack = new BitPack(moveUnroot, session.Character.Guid);
+            BitPack BitPack         = new BitPack(moveUnroot, session.Character.Guid);
 
             BitPack.WriteGuidMask(1, 0, 7, 2, 3, 4, 5, 6);
 

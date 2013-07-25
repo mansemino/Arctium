@@ -136,17 +136,17 @@ namespace WorldServer.Game.Packets.PacketHandler
         [Opcode(ClientMessage.CliTextEmote, "17128")]
         public static void HandleEmote(ref PacketReader packet, ref WorldClass session)
         {
-            BitUnpack GuidUnpacker = new BitUnpack(packet);
-            byte[] guidMask = { 4, 7, 1, 2, 5, 3, 0, 6 };
-            byte[] guidBytes = { 6, 7, 4, 5, 2, 1, 3, 0 };
+            BitUnpack GuidUnpacker  = new BitUnpack(packet);
+            byte[] guidMask         = { 4, 7, 1, 2, 5, 3, 0, 6 };
+            byte[] guidBytes        = { 6, 7, 4, 5, 2, 1, 3, 0 };
 
-            uint emote = packet.ReadUInt32();
-            int emoteSoundKit = packet.ReadInt32();
+            uint emote              = packet.Read<uint>();
+            int emoteSoundKit       = packet.Read<int>();
 
-            var targetGuid = GuidUnpacker.GetPackedValue(guidMask, guidBytes);
+            var targetGuid          = GuidUnpacker.GetPackedValue(guidMask, guidBytes);
 
-            string targetName = "";
-            string strEmote = ""; // To log status
+            string targetName       = "";
+            string strEmote         = ""; // To log status
 
             // Look for value into DBC. If not present, return
             var emotetext = CliDB.EmotesText.SingleOrDefault(textemote => textemote.ID == emote);
@@ -253,7 +253,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         [Opcode(ClientMessage.CliStandStateChange, "17128")]
         public static void HandleStandStateChange(ref PacketReader packet, ref WorldClass session)
         {
-            int readedStatus = packet.ReadInt32();
+            int readedStatus = packet.Read<int>();
 
             session.Character.setStandState(readedStatus);
         }

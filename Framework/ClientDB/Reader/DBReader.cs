@@ -78,28 +78,28 @@ namespace Framework.ClientDB.Reader
                                 switch (f.FieldType.Name)
                                 {
                                     case "SByte":
-                                        f.SetValue(newObj, dbReader.ReadSByte());
+                                        f.SetValue(newObj, dbReader.Read<sbyte>());
                                         break;
                                     case "Byte":
-                                        f.SetValue(newObj, dbReader.ReadByte());
+                                        f.SetValue(newObj, dbReader.Read<byte>());
                                         break;
                                     case "Int32":
-                                        f.SetValue(newObj, dbReader.ReadInt32());
+                                        f.SetValue(newObj, dbReader.Read<int>());
                                         break;
                                     case "UInt32":
-                                        f.SetValue(newObj, dbReader.ReadUInt32());
+                                        f.SetValue(newObj, dbReader.Read<uint>());
                                         break;
                                     case "Int64":
-                                        f.SetValue(newObj, dbReader.ReadInt64());
+                                        f.SetValue(newObj, dbReader.Read<long>());
                                         break;
                                     case "UInt64":
-                                        f.SetValue(newObj, dbReader.ReadUInt64());
+                                        f.SetValue(newObj, dbReader.Read<ulong>());
                                         break;
                                     case "Single":
-                                        f.SetValue(newObj, dbReader.ReadSingle());
+                                        f.SetValue(newObj, dbReader.Read<float>());
                                         break;
                                     case "Boolean":
-                                        f.SetValue(newObj, dbReader.ReadBoolean());
+                                        f.SetValue(newObj, dbReader.Read<bool>());
                                         break;
                                     case "SByte[]":
                                         f.SetValue(newObj, dbReader.ReadSByte(((sbyte[])f.GetValue(newObj)).Length));
@@ -124,7 +124,7 @@ namespace Framework.ClientDB.Reader
                                         break;
                                     case "String":
                                     {
-                                        var stringOffset = dbReader.ReadUInt32();
+                                        var stringOffset = dbReader.Read<uint>();
 
                                         if (stringOffset != lastStringOffset)
                                         {

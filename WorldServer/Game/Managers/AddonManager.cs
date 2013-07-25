@@ -15,165 +15,83 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Constants.NetMessage;
-using Framework.Network.Packets;
-using Framework.Singleton;
-using WorldServer.Network;
-
-using Framework.Logging;
 using System;
+using System.Collections.Concurrent;
 using Framework.Database;
-using Framework.Cryptography;
-
-using System.IO;
-using System.Text;
+using Framework.Logging;
+using Framework.Singleton;
+using Framework.ObjectDefines;
 
 namespace WorldServer.Game.Managers
 {
     public partial class AddonManager : SingletonBase<AddonManager>
     {
-        AddonManager() { }
+        ConcurrentDictionary<string, Addon> Addons;
 
-        public void WriteAddonData(ref WorldClass session)
+        AddonManager()
         {
-            PacketWriter addonInfo = new PacketWriter(ServerMessage.AddonInfo);
-            BitPack BitPack = new BitPack(addonInfo);
+            Addons = new ConcurrentDictionary<string, Addon>();
 
-            int AddOnCount = session.Addons.Count;
-
-            BitPack.Write<int>(0, 18);
-            BitPack.Write<int>(AddOnCount, 23);
-
-            session.Addons.ForEach(addon =>
-            {
-                BitPack.Write<bool>(addon.Enabled != 0);
-                BitPack.Write<bool>(addon.HasPUBData != 0);
-                BitPack.Write<bool>(addon.HasUrlString != 0);
-                if (addon.HasUrlString != 0)
-                    BitPack.Write<int>(addon.UrlString.Length, 8);
-            });
-
-            BitPack.Flush();
-
-            // Send Addon stored data for session
-            session.Addons.ForEach(addon =>
-            {
-                // atm not url string
-                if (addon.HasUrlString != 0x00)
-                    addonInfo.WriteString(addon.UrlString, false);
-
-                if (addon.HasPUBData != 0x00)
-                    addonInfo.WriteBytes(addon.PUBData, addon.PUBData.Length);
-
-                if (addon.Enabled != 0x00)
-                {
-                    addonInfo.WriteUInt32(addon.Version);
-                    addonInfo.WriteUInt8(addon.Enabled);
-                }
-
-                addonInfo.WriteUInt8(addon.AuthType);
-            });
-
-            session.Send(ref addonInfo);
-
+            LoadAddons();
         }
 
-        public void ReadAddonData(byte[] buffer, int size, ref WorldClass session)
+        public void LoadAddons()
         {
-            // Clean possible addon data
-            session.Addons.Clear();
-       
-            SQLResult result;
-            string addonName;
-            byte addonEnabled, usePUBData, ctr;
-            byte[] PUBData;
-            uint addonCRC, addonVersion, storedCRC, storedVersion;
+            Log.Message(LogType.DB, "Loading addon data...");
 
-            // Decompress received Addon Data            
-            PacketReader addonData = new PacketReader(ZLib.ZLibDecompress(buffer, true, size), false);
+            SQLResult result = DB.Characters.Select("SELECT * FROM addons");
 
-            // Get Addon number
-            int numAddons = addonData.ReadInt32();
-
-            // Debug Info
-            // Log.Message(LogType.Debug, "Received data for {0} addons...", numAddons);
-
-            // For each addon, read data from decoded packet and store into session for later use if needed
-            for (ctr = 0; ctr < numAddons; ctr++)
+            for (int i = 0; i < result.Count; i++)
             {
-                addonName       = addonData.ReadCString();
-                addonEnabled    = addonData.ReadByte();
-                addonCRC        = addonData.ReadUInt32();
-                addonVersion    = addonData.ReadUInt32();
+                string Name = result.Read<string>(i, "Name");
 
-                // Get data from DB and check if all is right
-                result = DB.Characters.Select("SELECT * FROM addons WHERE Name=?", addonName);
-
-                // If addon doesn't exist into DB, disable it and store default data
-                if (result.Count != 1)
+                var addon = new Addon
                 {
-                    session.Addons.Add(new Framework.ObjectDefines.Addon()
-                    {
-                        Id              = 0,
-                        AuthType        = 2,
-                        Enabled         = 0,
-                        CRC             = addonCRC,
-                        HasPUBData      = 0,
-                        PUBData         = null,
-                        Version         = (byte)addonVersion,
-                        HasUrlString    = 0,
-                        UrlString       = "",
-                    });
-                    Log.Message(LogType.Debug, "{0}: Unknown Addon (CRC {1}).", addonName, addonCRC);
-                }
-                else
-                {
-                    // Check if addon disabled. If so, take real value from DB
-                    if (addonEnabled == 0x01)
-                        addonEnabled = result.Read<byte>(0, "enabled");
+                    Version         = result.Read<byte>(i, "Version"),
+                    CRC             = result.Read<uint>(i, "CRC"),
+                    AuthType        = result.Read<byte>(i, "Auth_Type"),
+                    Enabled         = result.Read<byte>(i, "Enabled"),
+                    HasPUBData      = result.Read<byte>(i, "Use_PUB"),
+                    PUBData         = null,
+                    HasUrlString    = result.Read<byte>(i, "Has_Url_String"),
+                    UrlString       = result.Read<string>(i, "Url_String")
+                };
 
-                    // Check if CRC is Ok
-                    storedCRC = result.Read<uint>(0, "CRC");
-                    if (addonCRC != storedCRC)
-                    {
-                        addonEnabled = 0;
-                        Log.Message(LogType.Debug, "{0}: Addon with wrong CRC (stored: {1}; Got: {2}).", addonName, storedCRC, addonCRC);
-                    }
+                if (addon.HasPUBData == 0x01)
+                        addon.PUBData = result.Read<byte[]>(i, "PUB_Data");
 
-                    // Check if Change in Version is Ok
-                    storedVersion = result.Read<uint>(0, "Version");
-                    if (addonVersion != storedVersion)
-                    {
-                        addonEnabled = 0;
-                        Log.Message(LogType.Debug, "{0}: Addon with wrong Version (stored: {1}; Got: {2}).", addonName, storedVersion, addonVersion);
-                    }
-
-                    // Get PUB data if needed
-                    usePUBData = result.Read<byte>(0, "Use_PUB");
-                    if (usePUBData == 0x01)
-                    {
-                        PUBData = result.Read<byte[]>(0, "PUB_Data");
-                    }
-                    else
-                    {
-                        PUBData = null;
-                    }
-
-                    session.Addons.Add(new Framework.ObjectDefines.Addon()
-                    {
-                        Id              = result.Read<short>(0, "Index"),
-                        AuthType        = result.Read<byte>(0, "Auth_Type"),
-                        Enabled         = addonEnabled,
-                        CRC             = addonCRC,
-                        HasPUBData      = usePUBData,
-                        PUBData         = PUBData,
-                        Version         = (byte)result.Read<uint>(0, "Version"),
-                        HasUrlString    = result.Read<byte>(0, "Has_Url_String"),
-                        UrlString       = result.Read<string>(0, "Url_String"),
-                    });
-                }
+                Addons.TryAdd(Name, addon);
             }
-            int addonEnd = addonData.ReadInt32(); // Unknown
+            
+            Log.Message(LogType.DB, "Loaded {0} addons.", Addons.Count);
+            Log.Message();
         }
+
+        public Addon GetAddon(string Name)
+        {
+            Addon addon = null;
+
+            Addons.TryGetValue(Name, out addon);
+
+            return addon;
+        }
+
+        public Addon GetAddon(string Name, byte Enabled, uint CRC, byte Version)
+        {
+            Addon addon = null;
+
+            Addons.TryGetValue(Name, out addon);
+
+            if (addon != null)
+            {
+                if ((addon.Enabled == Enabled) && (addon.CRC == CRC) && (addon.Version == Version))
+                    return addon;
+                else
+                    return null;
+            }
+
+            return addon;
+        }
+
     }
 }

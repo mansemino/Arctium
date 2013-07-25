@@ -178,7 +178,6 @@ namespace WorldServer.Network
         public void Dispose()
         {
             Crypt.Dispose();
-            GC.SuppressFinalize(this);
         }
     }
 }

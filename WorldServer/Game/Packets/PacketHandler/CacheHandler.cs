@@ -24,7 +24,6 @@ using Framework.Database;
 using Framework.Logging;
 using Framework.Network.Packets;
 using Framework.ObjectDefines;
-// using WorldServer.Game.ObjectDefines;
 using WorldServer.Game.WorldEntities;
 using WorldServer.Network;
 

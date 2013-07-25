@@ -42,14 +42,14 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             BitUnpack bitunpack     = new BitUnpack(packet);
 
-            var classMask   = packet.ReadUInt32();
+            var classMask   = packet.Read<uint>();
 
-            byte byteFlag   = packet.ReadByte();
+            byte byteFlag   = packet.Read<byte>();
 
-            var maxLevel    = packet.ReadUInt32();
-            var raceMask    = packet.ReadUInt32();
-            var intFlag     = packet.ReadUInt32();
-            var minLevel    = packet.ReadUInt32();
+            var maxLevel    = packet.Read<uint>();
+            var raceMask    = packet.Read<uint>();
+            var intFlag     = packet.Read<uint>();
+            var minLevel    = packet.Read<uint>();
 
             var nameLength  = bitunpack.GetBits<uint>(6);
             var textCounter = bitunpack.GetBits<byte>(3);
@@ -79,7 +79,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             if (zoneCounter > 0)
             {
                 for (var ctr = 0; ctr < zoneCounter; ctr++)
-                    zoneList.Add(packet.ReadUInt32());
+                    zoneList.Add(packet.Read<uint>());
             }
 
             List<Character> charactersList  = new List<Character>();
