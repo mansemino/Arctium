@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System.Threading;
+using System.Threading.Tasks;
 using Framework.Constants.NetMessage;
 using Framework.Network.Packets;
 using WorldServer.Network;
@@ -23,50 +25,59 @@ namespace WorldServer.Game.Packets.PacketHandler
 {
     public class LogoutHandler : Globals
     {
-        [Opcode(ClientMessage.CliLogoutRequest, "17128")]
-        public static void HandleLogoutRequest(ref PacketReader packet, ref WorldClass session)
-        {
-            LogOutMgr.Add(session.Character.Guid);
+        static CancellationTokenSource cts;
 
+        [Opcode(ClientMessage.CliLogoutRequest, "17128")]
+        public static void HandleLogoutRequest(ref PacketReader packet, WorldClass session)
+        {
             PacketWriter logoutResponse = new PacketWriter(ServerMessage.LogoutResponse);
             BitPack BitPack = new BitPack(logoutResponse);
+
             logoutResponse.WriteUInt8(0);
             BitPack.Write(0);
             BitPack.Flush();
+
             session.Send(ref logoutResponse);
 
-            PacketWriter StandStateUpdate = new PacketWriter(ServerMessage.StandStateUpdate);
-            StandStateUpdate.WriteUInt8(1);
-            session.Send(ref StandStateUpdate);
+            Task.Delay(20000).ContinueWith(_ => HandleLogoutComplete(session), (cts = new CancellationTokenSource()).Token);
 
             session.Character.setStandState(1);
             
-            RootHandler.HandleMoveRoot(ref session); 
+            MoveHandler.HandleMoveRoot(session); 
         }
 
-        [Opcode(ClientMessage.CliLogoutCancel, "17128")]
-        public static void HandleLogoutCancel(ref PacketReader packet, ref WorldClass session)
+        public static void HandleLogoutComplete(WorldClass session)
         {
-            LogOutMgr.Remove(session.Character.Guid);
+            var pChar = session.Character;
 
-            RootHandler.HandleMoveUnroot(ref session);
+            ObjectMgr.SavePositionToDB(pChar);
+
+            PacketWriter logoutComplete = new PacketWriter(ServerMessage.LogoutComplete);
+            session.Send(ref logoutComplete);
+
+            WorldMgr.SendToInRangeCharacter(pChar, Packets.PacketHandler.ObjectHandler.HandleDestroyObject(session, pChar.Guid));
+            WorldMgr.DeleteSession(pChar.Guid);
+        }  
+
+        [Opcode(ClientMessage.CliLogoutCancel, "17128")]
+        public static void HandleLogoutCancel(ref PacketReader packet, WorldClass session)
+        {
+            cts.Cancel();
+
+            MoveHandler.HandleMoveUnroot(session);
 
             PacketWriter LogoutCancelAck = new PacketWriter(ServerMessage.LogoutCancelAck);
             session.Send(ref LogoutCancelAck);
-
-            PacketWriter StandStateUpdate = new PacketWriter(ServerMessage.StandStateUpdate);
-            StandStateUpdate.WriteUInt8(0);
-            session.Send(ref StandStateUpdate);
 
             session.Character.setStandState(0);
         }
 
         [Opcode(ClientMessage.CliLogoutInstant, "17128")]
-        public static void HandleLogoutInstant(ref PacketReader packet, ref WorldClass session)
+        public static void HandleLogoutInstant(ref PacketReader packet, WorldClass session)
         {
             var pChar = session.Character;
 
-            LogOutMgr.LogOut(ref session);
+            HandleLogoutComplete(session);
         }
     }
 }

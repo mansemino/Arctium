@@ -32,7 +32,7 @@ namespace WorldServer.Game.Packets.PacketHandler
 {
     public class MiscHandler : Globals
     {
-        public static void HandleMessageOfTheDay(ref WorldClass session)
+        public static void HandleMessageOfTheDay(WorldClass session)
         {
             PacketWriter motd = new PacketWriter(ServerMessage.MOTD);
             BitPack BitPack   = new BitPack(motd);
@@ -58,7 +58,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         }
 
         [Opcode(ClientMessage.Ping, "17128")]
-        public static void HandlePong(ref PacketReader packet, ref WorldClass session)
+        public static void HandlePong(ref PacketReader packet, WorldClass session)
         {
             uint latency = packet.Read<uint>();
             uint sequence = packet.Read<uint>();
@@ -70,7 +70,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         }
 
         [Opcode(ClientMessage.LogDisconnect, "17128")]
-        public static void HandleDisconnectReason(ref PacketReader packet, ref WorldClass session)
+        public static void HandleDisconnectReason(ref PacketReader packet, WorldClass session)
         {
             var pChar = session.Character;
             uint disconnectReason = packet.Read<uint>();
@@ -83,7 +83,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             Log.Message(LogType.Debug, "Account with Id {0} disconnected. Reason: {1}", session.Account.Id, disconnectReason);
         }
 
-        public static void HandleCacheVersion(ref WorldClass session)
+        public static void HandleCacheVersion(WorldClass session)
         {
             PacketWriter cacheVersion = new PacketWriter(ServerMessage.CacheVersion);
 
@@ -93,7 +93,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         }
 
         [Opcode(ClientMessage.LoadingScreenNotify, "17128")]
-        public static void HandleLoadingScreenNotify(ref PacketReader packet, ref WorldClass session)
+        public static void HandleLoadingScreenNotify(ref PacketReader packet, WorldClass session)
         {
             BitUnpack BitUnpack = new BitUnpack(packet);
 
@@ -104,7 +104,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         }
 
         [Opcode(ClientMessage.ViolenceLevel, "17128")]
-        public static void HandleViolenceLevel(ref PacketReader packet, ref WorldClass session)
+        public static void HandleViolenceLevel(ref PacketReader packet, WorldClass session)
         {
             byte violenceLevel = packet.Read<byte>();
 
@@ -112,7 +112,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         }
 
         [Opcode(ClientMessage.ActivePlayer, "17128")]
-        public static void HandleActivePlayer(ref PacketReader packet, ref WorldClass session)
+        public static void HandleActivePlayer(ref PacketReader packet, WorldClass session)
         {
             byte active = packet.Read<byte>();    // Always 0
 
@@ -120,7 +120,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         }
 
         // [Opcode(ClientMessage.ZoneUpdate, "16826")]
-        public static void HandleZoneUpdate(ref PacketReader packet, ref WorldClass session)
+        public static void HandleZoneUpdate(ref PacketReader packet, WorldClass session)
         {
             var pChar = session.Character;
 
@@ -130,7 +130,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         }
 
         [Opcode(ClientMessage.CliSetSelection, "17128")]
-        public static void HandleSetSelection(ref PacketReader packet, ref WorldClass session)
+        public static void HandleSetSelection(ref PacketReader packet, WorldClass session)
         {
             byte[] guidMask = { 5, 2, 3, 6, 0, 7, 4, 1 };
             byte[] guidBytes = { 7, 6, 4, 0, 3, 1, 2, 5 };
@@ -155,12 +155,12 @@ namespace WorldServer.Game.Packets.PacketHandler
         }
 
         [Opcode(ClientMessage.SetActionButton, "17128")]
-        public static void HandleSetActionButton(ref PacketReader packet, ref WorldClass session)
+        public static void HandleSetActionButton(ref PacketReader packet, WorldClass session)
         {
             var pChar = session.Character;
 
-            byte[] actionMask = { 2, 5, 0, 3, 6, 4, 1, 7 };
-            byte[] actionBytes = { 7, 3, 0, 2, 1, 5, 4, 6 };
+            byte[] actionMask  = { 5, 0, 2, 3, 1, 6, 7, 4 };
+            byte[] actionBytes = { 2, 7, 5, 3, 1, 0, 4, 6 };
 
             var slotId = packet.ReadByte();
             
@@ -171,15 +171,17 @@ namespace WorldServer.Game.Packets.PacketHandler
             if (actionId == 0)
             {
                 var action = pChar.ActionButtons.Where(button => button.SlotId == slotId && button.SpecGroup == pChar.ActiveSpecGroup).Select(button => button).First();
+
                 ActionMgr.RemoveActionButton(pChar, action, true);
                 Log.Message(LogType.Debug, "Character (Guid: {0}) removed action button {1} from slot {2}.", pChar.Guid, actionId, slotId);
+
                 return;
             }
 
             var newAction = new ActionButton
             {
-                Action = actionId,
-                SlotId = slotId,
+                Action    = actionId,
+                SlotId    = slotId,
                 SpecGroup = pChar.ActiveSpecGroup
             };
 
@@ -187,7 +189,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             Log.Message(LogType.Debug, "Character (Guid: {0}) added action button {1} to slot {2}.", pChar.Guid, actionId, slotId);
         }
 
-        public static void HandleUpdateActionButtons(ref WorldClass session)
+        public static void HandleUpdateActionButtons(WorldClass session)
         {
             var pChar = session.Character;
 

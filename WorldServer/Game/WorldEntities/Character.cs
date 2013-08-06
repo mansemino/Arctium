@@ -65,9 +65,9 @@ namespace WorldServer.Game.WorldEntities
         public Dictionary<ulong, WorldObject> InRangeObjects = new Dictionary<ulong, WorldObject>();
 
         public List<ActionButton> ActionButtons = new List<ActionButton>();
-        public List<Skill> Skills = new List<Skill>();
-        public List<PlayerSpell> SpellList = new List<PlayerSpell>();
-        public List<Talent> TalentList = new List<Talent>();
+        public List<Skill> Skills               = new List<Skill>();
+        public List<PlayerSpell> SpellList      = new List<PlayerSpell>();
+        public List<Talent> TalentList          = new List<Talent>();
 
         public Character(ulong guid, int updateLength = (int)PlayerFields.End) : base(updateLength)
         {
@@ -180,8 +180,8 @@ namespace WorldServer.Game.WorldEntities
 
             SetUpdateField<int>((int)PlayerFields.CurrentSpecID, (int)GetActiveSpecId());
 
-            SetUpdateField<int>((int)PlayerFields.SpellCritPercentage + 0, SpecializationMgr.GetUnspentTalentRowCount(this), 0);
-            SetUpdateField<int>((int)PlayerFields.SpellCritPercentage + 1, SpecializationMgr.GetMaxTalentRowCount(this), 0);
+            SetUpdateField<int>((int)PlayerFields.CharacterPoints, SpecializationMgr.GetUnspentTalentRowCount(this), 0);
+            SetUpdateField<int>((int)PlayerFields.MaxTalentTiers, SpecializationMgr.GetMaxTalentRowCount(this), 0);
 
             for (int i = 0; i < 448; i++)
                 if (i < Skills.Count)
@@ -222,7 +222,7 @@ namespace WorldServer.Game.WorldEntities
                 SetUpdateField<int>((int)PlayerFields.PlayerFlags, (int)((this.UnitIsAfk) ? PlayerFlag.Afk : PlayerFlag.None));
 
                 var session = WorldMgr.GetSession(this.Guid);
-                ObjectHandler.HandleUpdateObjectValues(ref session, true);
+                ObjectHandler.HandleUpdateObjectValues(session, true);
             }
         }
 
@@ -246,7 +246,7 @@ namespace WorldServer.Game.WorldEntities
 
                 var session = WorldMgr.GetSession(this.Guid);
                 
-                ObjectHandler.HandleUpdateObjectValues(ref session, true);
+                ObjectHandler.HandleUpdateObjectValues(session, true);
             }
         }
 
@@ -260,7 +260,7 @@ namespace WorldServer.Game.WorldEntities
 
             SetUpdateField<int>((int)UnitFields.EmoteState, (int)emote);
 
-            ObjectHandler.HandleUpdateObjectValues(ref session, true, OnlyBroadcast);
+            ObjectHandler.HandleUpdateObjectValues(session, true, OnlyBroadcast);
         }
 
         public void setStandState(int state = 0, bool broadcast = true, bool toself = true)
@@ -275,10 +275,10 @@ namespace WorldServer.Game.WorldEntities
             SetUpdateField<int>((int)UnitFields.AnimTier, (int)state);
 
             if (toself)
-                EmoteHandler.HandleStandStateChangeAck(status, ref session);
+                EmoteHandler.HandleStandStateChangeAck(status, session);
             
             if (broadcast)
-                ObjectHandler.HandleUpdateObjectValues(ref session, true, toself);
+                ObjectHandler.HandleUpdateObjectValues(session, true, toself);
         }
 
         // TODO: When Guilds are implemented, use GUID to get Guild Name.

@@ -23,7 +23,7 @@ namespace WorldServer.Game.Packets.PacketHandler
 {
     public class TutorialHandler
     {
-        public static void HandleTutorialFlags(ref WorldClass session)
+        public static void HandleTutorialFlags(WorldClass session)
         {
             PacketWriter tutorialFlags = new PacketWriter(ServerMessage.TutorialFlags);
             for (int i = 0; i < 8; i++)

@@ -78,7 +78,7 @@ namespace WorldServer.Game.Managers
             }
         }
 
-        public bool AddSession(ulong guid, ref WorldClass session)
+        public bool AddSession(ulong guid, WorldClass session)
         {
             return Sessions.TryAdd(guid, session);
         }
@@ -206,7 +206,7 @@ namespace WorldServer.Game.Managers
                     s.Value.Send(ref packet);
         }
 
-        public void WriteAccountDataTimes(AccountDataMasks mask, ref WorldClass session)
+        public void WriteAccountDataTimes(AccountDataMasks mask, WorldClass session)
         {
             PacketWriter accountDataTimes = new PacketWriter(ServerMessage.AccountDataTimes);
             BitPack BitPack = new BitPack(accountDataTimes);

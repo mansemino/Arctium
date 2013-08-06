@@ -101,7 +101,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             return result;
         }
 
-        public static void HandlePlayEmote(uint emote, ref WorldClass session)
+        public static void HandlePlayEmote(uint emote, WorldClass session)
         {
             // Look for value into DBC. If not present, return
             var emotetext = CliDB.EmotesText.SingleOrDefault(textemote => textemote.ID == emote);
@@ -123,7 +123,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             WorldMgr.SendToInRangeCharacter(session.Character, AnimEmoteResponse);
         }
 
-        public static void HandleTextEmote(uint emote, int emoteSoundKit, string targetName, ulong targetGuid, ref WorldClass session)
+        public static void HandleTextEmote(uint emote, int emoteSoundKit, string targetName, ulong targetGuid, WorldClass session)
         {
             // Compose text emote response
             PacketWriter TextEmoteResponse = TextEmotePacket(emote, emoteSoundKit, targetName, targetGuid);
@@ -134,7 +134,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         }
 
         [Opcode(ClientMessage.CliTextEmote, "17128")]
-        public static void HandleEmote(ref PacketReader packet, ref WorldClass session)
+        public static void HandleEmote(ref PacketReader packet, WorldClass session)
         {
             BitUnpack GuidUnpacker  = new BitUnpack(packet);
             byte[] guidMask         = { 4, 7, 1, 2, 5, 3, 0, 6 };
@@ -200,7 +200,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             }
 
             // Always send text emote
-            HandleTextEmote(emote, emoteSoundKit, targetName, session.Character.Guid, ref session);
+            HandleTextEmote(emote, emoteSoundKit, targetName, session.Character.Guid, session);
 
             // Check the animation: If exists and one shot
             var emoteanim = CliDB.EmotesText.SingleOrDefault(aemote => aemote.ID == emote);
@@ -214,7 +214,7 @@ namespace WorldServer.Game.Packets.PacketHandler
                     else
                     {
                         if (emotetype.FlagOneShot == 0)
-                            HandlePlayEmote(emote, ref session);
+                            HandlePlayEmote(emote, session);
                         else
                             session.Character.setEmoteState(emoteanim.EmoteId);
                     }
@@ -223,7 +223,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         }
 
         [Opcode(ClientMessage.CliChatMessageAfk, "17128")]
-        public static void HandleChangePlayerAFKState(ref PacketReader packet, ref WorldClass session)
+        public static void HandleChangePlayerAFKState(ref PacketReader packet, WorldClass session)
         {
             var pChar           = session.Character;
             string afkText      = "";
@@ -237,7 +237,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         }
 
         [Opcode(ClientMessage.CliChatMessageDnd, "17128")]
-        public static void HandleChangePlayerDNDState(ref PacketReader packet, ref WorldClass session)
+        public static void HandleChangePlayerDNDState(ref PacketReader packet, WorldClass session)
         {
             var pChar           = session.Character;
             string dndText      = ""; 
@@ -251,14 +251,14 @@ namespace WorldServer.Game.Packets.PacketHandler
         }
 
         [Opcode(ClientMessage.CliStandStateChange, "17128")]
-        public static void HandleStandStateChange(ref PacketReader packet, ref WorldClass session)
+        public static void HandleStandStateChange(ref PacketReader packet, WorldClass session)
         {
             int readedStatus = packet.Read<int>();
 
             session.Character.setStandState(readedStatus);
         }
 
-        public static void HandleStandStateChangeAck(byte status, ref WorldClass session)
+        public static void HandleStandStateChangeAck(byte status, WorldClass session)
         {
             PacketWriter StandStateChangeAck = new PacketWriter(ServerMessage.StandStateUpdate);
 

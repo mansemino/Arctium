@@ -29,7 +29,7 @@ namespace WorldServer.Game.Packets.PacketHandler
     public class AuthenticationHandler : Globals
     {
         [Opcode(ClientMessage.TransferInitiate, "17128")]
-        public static void HandleAuthChallenge(ref PacketReader packet, ref WorldClass session)
+        public static void HandleAuthChallenge(ref PacketReader packet, WorldClass session)
         {
             PacketWriter authChallenge = new PacketWriter(ServerMessage.AuthChallenge, true);
 
@@ -43,7 +43,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         }
 
         [Opcode(ClientMessage.AuthSession, "17128")]
-        public static void HandleAuthResponse(ref PacketReader packet, ref WorldClass session)
+        public static void HandleAuthResponse(ref PacketReader packet, WorldClass session)
         {
             BitUnpack BitUnpack = new BitUnpack(packet);
 
@@ -93,7 +93,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             addonUnpackedSize   = packet.Read<int>();
 
             byte[] packedAddon  = packet.ReadBytes(addonPackedSize - 4);
-            AddonHandler.ReadAddonData(packedAddon, addonUnpackedSize, ref session);
+            AddonHandler.ReadAddonData(packedAddon, addonUnpackedSize, session);
 
             bool aBit           = BitUnpack.GetBit(); // this[72]
 
@@ -203,8 +203,8 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             session.Send(ref authResponse);
 
-            MiscHandler.HandleCacheVersion(ref session);
-            TutorialHandler.HandleTutorialFlags(ref session);
+            MiscHandler.HandleCacheVersion(session);
+            TutorialHandler.HandleTutorialFlags(session);
         }
     }
 }

@@ -25,8 +25,7 @@ namespace WorldServer.Game.Packets.PacketHandler
 {
     public class AddonHandler : Globals
     {
-
-        public static void ReadAddonData(byte[] buffer, int size, ref WorldClass session)
+        public static void ReadAddonData(byte[] buffer, int size, WorldClass session)
         {
             // Clean possible addon data
             session.Addons.Clear();
@@ -73,7 +72,7 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             int addonEnd = addonData.Read<int>(); // Unknown
         }
-        public static void WriteAddonData(ref WorldClass session)
+        public static void WriteAddonData(WorldClass session)
         {
             PacketWriter addonInfo = new PacketWriter(ServerMessage.AddonInfo);
             BitPack BitPack = new BitPack(addonInfo);

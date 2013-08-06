@@ -22,6 +22,8 @@ using Framework.ObjectDefines;
 using WorldServer.Game.Packets.PacketHandler;
 using WorldServer.Network;
 
+using Framework.Console.Commands;
+
 namespace WorldServer.Game.Chat.Commands
 {
     public class MiscCommands : Globals
@@ -45,7 +47,7 @@ namespace WorldServer.Game.Chat.Commands
 
             ChatMessageValues chatMessage = new ChatMessageValues(0, commandList.ToString());
 
-            ChatHandler.SendMessage(ref session, chatMessage);
+            ChatHandler.SendMessage(session, chatMessage);
         }
 
         [ChatCommand("save")]
@@ -55,7 +57,7 @@ namespace WorldServer.Game.Chat.Commands
 
             ChatMessageValues chatMessage = new ChatMessageValues(0, "Your character is successfully saved to the database!");
 
-            ChatHandler.SendMessage(ref session, chatMessage);
+            ChatHandler.SendMessage(session, chatMessage);
         }
     }
 }

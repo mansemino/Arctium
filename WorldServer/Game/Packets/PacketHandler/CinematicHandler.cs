@@ -27,7 +27,7 @@ namespace WorldServer.Game.Packets.PacketHandler
 {
     public class CinematicHandler
     {
-        public static void HandleStartCinematic(ref WorldClass session)
+        public static void HandleStartCinematic(WorldClass session)
         {
             Character pChar = session.Character;
 

@@ -25,7 +25,7 @@ namespace WorldServer.Game.Packets.PacketHandler
 {
     public class SpellHandler : Globals
     {
-        public static void HandleSendKnownSpells(ref WorldClass session)
+        public static void HandleSendKnownSpells(WorldClass session)
         {
             Character pChar = session.Character;
 
@@ -57,7 +57,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             session.Send(ref writer);
         }
 
-        public static void HandleLearnedSpells(ref WorldClass session, List<uint> newSpells)
+        public static void HandleLearnedSpells(WorldClass session, List<uint> newSpells)
         {
             PacketWriter writer = new PacketWriter(ServerMessage.LearnedSpells);
             BitPack BitPack = new BitPack(writer);
@@ -73,7 +73,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             session.Send(ref writer);
         }
 
-        public static void HandleUnlearnedSpells(ref WorldClass session, List<uint> oldSpells)
+        public static void HandleUnlearnedSpells(WorldClass session, List<uint> oldSpells)
         {
             PacketWriter writer = new PacketWriter(ServerMessage.UnlearnedSpells);
             BitPack BitPack = new BitPack(writer);

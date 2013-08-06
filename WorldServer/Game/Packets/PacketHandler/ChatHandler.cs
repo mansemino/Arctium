@@ -27,7 +27,7 @@ namespace WorldServer.Game.Packets.PacketHandler
     public class ChatHandler : Globals
     {
         [Opcode(ClientMessage.ChatMessageSay, "17128")]
-        public static void HandleChatMessageSay(ref PacketReader packet, ref WorldClass session)
+        public static void HandleChatMessageSay(ref PacketReader packet, WorldClass session)
         {
             BitUnpack BitUnpack = new BitUnpack(packet);
 
@@ -42,11 +42,11 @@ namespace WorldServer.Game.Packets.PacketHandler
             if (ChatCommandParser.CheckForCommand(message))
                 ChatCommandParser.ExecuteChatHandler(message, session);
             else
-                SendMessage(ref session, chatMessage);
+                SendMessage(session, chatMessage);
         }
 
         [Opcode(ClientMessage.ChatMessageYell, "17128")]
-        public static void HandleChatMessageYell(ref PacketReader packet, ref WorldClass session)
+        public static void HandleChatMessageYell(ref PacketReader packet, WorldClass session)
         {
             BitUnpack BitUnpack = new BitUnpack(packet);
 
@@ -58,11 +58,11 @@ namespace WorldServer.Game.Packets.PacketHandler
             ChatMessageValues chatMessage = new ChatMessageValues(MessageType.ChatMessageYell, message, true, true);
             chatMessage.Language = (byte)language;
 
-            SendMessage(ref session, chatMessage);
+            SendMessage(session, chatMessage);
         }
 
         [Opcode(ClientMessage.ChatMessageWhisper, "17128")]
-        public static void HandleChatMessageWhisper(ref PacketReader packet, ref WorldClass session)
+        public static void HandleChatMessageWhisper(ref PacketReader packet, WorldClass session)
         {
             BitUnpack BitUnpack = new BitUnpack(packet);
 
@@ -80,24 +80,24 @@ namespace WorldServer.Game.Packets.PacketHandler
                 return;
 
             ChatMessageValues chatMessage = new ChatMessageValues(MessageType.ChatMessageWhisperInform, message, false, true);
-            SendMessage(ref session, chatMessage, rSession);
+            SendMessage(session, chatMessage, rSession);
 
             chatMessage = new ChatMessageValues(MessageType.ChatMessageWhisper, message, false, true);
-            SendMessage(ref rSession, chatMessage, session);
+            SendMessage(rSession, chatMessage, session);
 
             if (rSession.Character.UnitIsAfk)
             {
                 chatMessage = new ChatMessageValues(MessageType.ChatMessageAfk, rSession.Character.UnitIsAfkMessage, false, true);
-                SendMessage(ref session, chatMessage, rSession);
+                SendMessage(session, chatMessage, rSession);
             }
             else if (rSession.Character.UnitIsDnd)
             {
                 chatMessage = new ChatMessageValues(MessageType.ChatMessageDnd, rSession.Character.UnitIsDndMessage, false, true);
-                SendMessage(ref session, chatMessage, rSession);
+                SendMessage(session, chatMessage, rSession);
             }
         }
 
-        public static void SendMessage(ref WorldClass session, ChatMessageValues chatMessage, WorldClass pSession = null)
+        public static void SendMessage(WorldClass session, ChatMessageValues chatMessage, WorldClass pSession = null)
         {
             byte[] GuidMask = { 5, 4, 1, 0, 6, 2, 7, 3};
             byte[] GuidMask3 = { 1, 5, 7, 4, 2, 0, 6, 3 };

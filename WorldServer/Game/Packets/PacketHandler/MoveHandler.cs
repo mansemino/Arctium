@@ -56,7 +56,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         [Opcode(ClientMessage.MoveChangeTransport,      "17128")]
         [Opcode(ClientMessage.MoveStartDescend,         "17128")]
         [Opcode(ClientMessage.MoveDismissVehicle,       "17128")]
-        public static void HandlePlayerMove(ref PacketReader packet, ref WorldClass session)
+        public static void HandlePlayerMove(ref PacketReader packet, WorldClass session)
         {
             ObjectMovementValues movementValues = new ObjectMovementValues();
             BitUnpack BitUnpack = new BitUnpack(packet);
@@ -165,6 +165,120 @@ namespace WorldServer.Game.Packets.PacketHandler
             session.Character.setEmoteState();
         }
 
+        [Opcode(ClientMessage.MoveForceRootAck, "17128")]
+        [Opcode(ClientMessage.MoveForceUnrootAck, "17128")]
+        public static void HandlePlayerMoveRoot(ref PacketReader packet, WorldClass session)
+        {
+            ObjectMovementValues movementValues = new ObjectMovementValues();
+            BitUnpack BitUnpack = new BitUnpack(packet);
+
+            var guidMask = new bool[8];
+            var guidBytes = new byte[8];
+
+            var rootValue = packet.Read<UInt32>();
+
+            Vector4 vector = new Vector4()
+            {
+                Y = packet.Read<float>(),
+                Z = packet.Read<float>(),
+                X = packet.Read<float>()
+            };
+
+            guidMask[3] = BitUnpack.GetBit();
+
+            var HasPitch = !BitUnpack.GetBit();
+
+            guidMask[0] = BitUnpack.GetBit();
+
+            var counter = BitUnpack.GetBits<uint>(22);
+
+            guidMask[2] = BitUnpack.GetBit();
+
+            var HasSplineElevation = !BitUnpack.GetBit();
+
+            movementValues.HasRotation = !BitUnpack.GetBit();
+
+            var Unknown = BitUnpack.GetBit();
+            var Unknown2 = BitUnpack.GetBit();
+
+            guidMask[7] = BitUnpack.GetBit();
+
+            var HasTime = !BitUnpack.GetBit();
+
+            movementValues.IsFallingOrJumping = BitUnpack.GetBit();
+            movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
+            movementValues.HasMovementFlags = !BitUnpack.GetBit();
+
+            var Unknown3 = !BitUnpack.GetBit();
+            var Unknown4 = BitUnpack.GetBit();
+
+            guidMask[6] = BitUnpack.GetBit();
+            guidMask[1] = BitUnpack.GetBit();
+
+            movementValues.IsTransport = BitUnpack.GetBit();
+
+            guidMask[4] = BitUnpack.GetBit();
+            guidMask[5] = BitUnpack.GetBit();
+
+            if (movementValues.HasMovementFlags)
+                movementValues.MovementFlags = (MovementFlag)BitUnpack.GetBits<uint>(30);
+
+            if (movementValues.IsFallingOrJumping)
+                movementValues.HasJumpData = BitUnpack.GetBit();
+
+            if (movementValues.HasMovementFlags2)
+                movementValues.MovementFlags2 = (MovementFlag2)BitUnpack.GetBits<uint>(13);
+
+            if (guidMask[0]) guidBytes[0] = (byte)(packet.Read<byte>() ^ 1);
+
+            for (int i = 0; i < counter; i++)
+                packet.Read<uint>();
+
+            if (guidMask[4]) guidBytes[4] = (byte)(packet.Read<byte>() ^ 1);
+            if (guidMask[1]) guidBytes[1] = (byte)(packet.Read<byte>() ^ 1);
+            if (guidMask[5]) guidBytes[5] = (byte)(packet.Read<byte>() ^ 1);
+            if (guidMask[6]) guidBytes[6] = (byte)(packet.Read<byte>() ^ 1);
+            if (guidMask[2]) guidBytes[2] = (byte)(packet.Read<byte>() ^ 1);
+            if (guidMask[3]) guidBytes[3] = (byte)(packet.Read<byte>() ^ 1);
+            if (guidMask[7]) guidBytes[7] = (byte)(packet.Read<byte>() ^ 1);
+
+            if (HasPitch)
+                packet.Read<float>();
+
+            if (movementValues.HasRotation)
+                vector.O = packet.Read<float>();
+
+            if (movementValues.IsFallingOrJumping)
+            {
+                movementValues.JumpVelocity = packet.Read<float>();
+
+                if (movementValues.HasJumpData)
+                {
+                    movementValues.CurrentSpeed = packet.Read<float>();
+                    movementValues.Sin = packet.Read<float>();
+                    movementValues.Cos = packet.Read<float>();
+                }
+
+                movementValues.FallTime = packet.Read<uint>();
+            }
+
+            if (Unknown3)
+                packet.Read<uint>();
+
+            if (HasSplineElevation)
+                packet.Read<float>();
+
+            if (HasTime)
+                movementValues.Time = packet.Read<uint>();
+
+            var guid = BitConverter.ToUInt64(guidBytes, 0);
+            HandleMoveUpdate(guid, movementValues, vector);
+
+            // Clear emote if needed
+            session.Character.setEmoteState();
+        }
+
+
         public static void HandleMoveUpdate(ulong guid, ObjectMovementValues movementValues, Vector4 vector)
         {
             PacketWriter moveUpdate = new PacketWriter(ServerMessage.MoveUpdate);
@@ -253,7 +367,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             }
         }
 
-        public static void HandleMoveSetWalkSpeed(ref WorldClass session, float speed = 2.5f)
+        public static void HandleMoveSetWalkSpeed(WorldClass session, float speed = 2.5f)
         {
             PacketWriter setWalkSpeed = new PacketWriter(ServerMessage.MoveSetWalkSpeed);
             BitPack BitPack = new BitPack(setWalkSpeed, session.Character.Guid);
@@ -274,7 +388,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             session.Send(ref setWalkSpeed);
         }
 
-        public static void HandleMoveSetRunSpeed(ref WorldClass session, float speed = 7f)
+        public static void HandleMoveSetRunSpeed(WorldClass session, float speed = 7f)
         {
             PacketWriter setRunSpeed = new PacketWriter(ServerMessage.MoveSetRunSpeed);
             BitPack BitPack = new BitPack(setRunSpeed, session.Character.Guid);
@@ -295,7 +409,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             session.Send(ref setRunSpeed);
         }
 
-        public static void HandleMoveSetSwimSpeed(ref WorldClass session, float speed = 4.72222f)
+        public static void HandleMoveSetSwimSpeed(WorldClass session, float speed = 4.72222f)
         {
             PacketWriter setSwimSpeed = new PacketWriter(ServerMessage.MoveSetSwimSpeed);
             BitPack BitPack = new BitPack(setSwimSpeed, session.Character.Guid);
@@ -314,7 +428,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             session.Send(ref setSwimSpeed);
         }
 
-        public static void HandleMoveSetFlightSpeed(ref WorldClass session, float speed = 7f)
+        public static void HandleMoveSetFlightSpeed(WorldClass session, float speed = 7f)
         {
             PacketWriter setFlightSpeed = new PacketWriter(ServerMessage.MoveSetFlightSpeed);
             BitPack BitPack = new BitPack(setFlightSpeed, session.Character.Guid);
@@ -333,7 +447,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             session.Send(ref setFlightSpeed);
         }
 
-        public static void HandleMoveSetRotationSpeed(ref WorldClass session, float speed = 7f)
+        public static void HandleMoveSetRotationSpeed(WorldClass session, float speed = 7f)
         {
             PacketWriter packet = new PacketWriter(ServerMessage.MoveSetRotationSpeed);
             BitPack BitPack = new BitPack(packet, session.Character.Guid);
@@ -349,7 +463,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             session.Send(ref packet);
         }
 
-        public static void HandleMoveSetCanFly(ref WorldClass session)
+        public static void HandleMoveSetCanFly(WorldClass session)
         {
             PacketWriter moveSetCanFly = new PacketWriter(ServerMessage.MoveSetCanFly);
             BitPack BitPack = new BitPack(moveSetCanFly, session.Character.Guid);
@@ -365,7 +479,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             session.Send(ref moveSetCanFly);
         }
 
-        public static void HandleMoveUnsetCanFly(ref WorldClass session)
+        public static void HandleMoveUnsetCanFly(WorldClass session)
         {
             PacketWriter unsetCanFly = new PacketWriter(ServerMessage.MoveUnsetCanFly);
             BitPack BitPack = new BitPack(unsetCanFly, session.Character.Guid);
@@ -380,7 +494,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             session.Send(ref unsetCanFly);
         }
 
-        public static void HandleMoveTeleport(ref WorldClass session, Vector4 vector)
+        public static void HandleMoveTeleport(WorldClass session, Vector4 vector)
         {
             bool IsTransport = false;
             bool Unknown = false;
@@ -429,7 +543,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             session.Send(ref moveTeleport);
         }
 
-        public static void HandleTransferPending(ref WorldClass session, uint mapId)
+        public static void HandleTransferPending(WorldClass session, uint mapId)
         {
             bool Unknown = false;
             bool IsTransport = false;
@@ -454,7 +568,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             session.Send(ref transferPending);
         }
 
-        public static void HandleNewWorld(ref WorldClass session, Vector4 vector, uint mapId)
+        public static void HandleNewWorld(WorldClass session, Vector4 vector, uint mapId)
         {
             PacketWriter newWorld = new PacketWriter(ServerMessage.NewWorld);
 
@@ -466,5 +580,38 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             session.Send(ref newWorld);
         }
+
+        public static void HandleMoveRoot(WorldClass session)
+        {
+            PacketWriter moveRoot = new PacketWriter(ServerMessage.MoveRoot);
+            BitPack BitPack = new BitPack(moveRoot, session.Character.Guid);
+
+            BitPack.WriteGuidMask(2, 5, 0, 7, 3, 6, 4, 1);
+            BitPack.Flush();
+
+            moveRoot.WriteUInt32(0);
+
+            BitPack.WriteGuidBytes(5, 3, 6, 4, 0, 1, 7, 2);
+
+            session.Send(ref moveRoot);
+        }
+
+        public static void HandleMoveUnroot(WorldClass session)
+        {
+            PacketWriter moveUnroot = new PacketWriter(ServerMessage.MoveUnroot);
+            BitPack BitPack = new BitPack(moveUnroot, session.Character.Guid);
+
+            BitPack.WriteGuidMask(1, 0, 7, 2, 3, 4, 5, 6);
+
+            BitPack.WriteGuidBytes(3, 0, 1, 7, 4);
+            BitPack.Flush();
+
+            moveUnroot.WriteUInt32(0);
+
+            BitPack.WriteGuidBytes(5, 2, 6);
+            BitPack.Flush();
+
+            session.Send(ref moveUnroot);
+        }    
     }
 }

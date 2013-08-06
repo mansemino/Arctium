@@ -53,12 +53,12 @@ namespace WorldServer.Game.Chat.Commands
                     chatMessage.Message = "Spawn successfully added.";
 
                     spawn.AddToWorld();
-                    ChatHandler.SendMessage(ref session, chatMessage);
+                    ChatHandler.SendMessage(session, chatMessage);
                 }
                 else
                 {
                     chatMessage.Message = "Spawn can't be added.";
-                    ChatHandler.SendMessage(ref session, chatMessage);
+                    ChatHandler.SendMessage(session, chatMessage);
                 }
             }
         }
@@ -76,14 +76,14 @@ namespace WorldServer.Game.Chat.Commands
                 chatMessage.Message = "Selected Spawn successfully removed.";
 
                 SpawnMgr.RemoveSpawn(spawn);
-                WorldMgr.SendToInRangeCharacter(pChar, ObjectHandler.HandleDestroyObject(ref session, pChar.TargetGuid));
-                ChatHandler.SendMessage(ref session, chatMessage);
+                WorldMgr.SendToInRangeCharacter(pChar, ObjectHandler.HandleDestroyObject(session, pChar.TargetGuid));
+                ChatHandler.SendMessage(session, chatMessage);
             }
             else
             {
                 chatMessage.Message = "Not a creature.";
 
-                ChatHandler.SendMessage(ref session, chatMessage);
+                ChatHandler.SendMessage(session, chatMessage);
             }
         }
     }

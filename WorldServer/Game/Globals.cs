@@ -32,7 +32,7 @@ namespace WorldServer.Game
         public static SpecializationManager SpecializationMgr;
         public static SpellManager SpellMgr;
         public static WorldManager WorldMgr;
-        public static LogoutManager LogOutMgr;
+        // public static LogoutManager LogOutMgr;
 
         public static void Initialize()
         {
@@ -49,7 +49,7 @@ namespace WorldServer.Game
             GossipMgr         = GossipManager.GetInstance();
             ObjectMgr         = ObjectManager.GetInstance();
             WorldMgr          = WorldManager.GetInstance();
-            LogOutMgr         = LogoutManager.GetInstance();
+            // LogOutMgr         = LogoutManager.GetInstance();
         }
     }
 }

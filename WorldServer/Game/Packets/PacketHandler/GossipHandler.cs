@@ -26,7 +26,7 @@ namespace WorldServer.Game.Packets.PacketHandler
     public class GossipHandler : Globals
     {
         [Opcode(ClientMessage.CliTalkToGossip, "17128")]
-        public static void HandleTalkToGossip(ref PacketReader packet, ref WorldClass session)
+        public static void HandleTalkToGossip(ref PacketReader packet, WorldClass session)
         {
             BitUnpack BitUnpack = new BitUnpack(packet);
 

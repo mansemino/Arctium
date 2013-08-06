@@ -30,7 +30,7 @@ namespace WorldServer.Game.Packets.PacketHandler
     public class SpecializationHandler : Globals
     {
         [Opcode(ClientMessage.CliSetSpecialization, "17128")]
-        public static void HandleCliSetSpecialization(ref PacketReader packet, ref WorldClass session)
+        public static void HandleCliSetSpecialization(ref PacketReader packet, WorldClass session)
         {
             var pChar = session.Character;
 
@@ -53,24 +53,22 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             SpecializationMgr.SaveSpecInfo(pChar);
 
-            SendSpecializationSpells(ref session);
-            HandleUpdateTalentData(ref session);
+            SendSpecializationSpells(session);
+            HandleUpdateTalentData(session);
 
             pChar.SetUpdateField<int>((int)PlayerFields.CurrentSpecID, (int)pChar.GetActiveSpecId());
-            ObjectHandler.HandleUpdateObjectValues(ref session);
+            ObjectHandler.HandleUpdateObjectValues(session);
 
             Log.Message(LogType.Debug, "Character (Guid: {0}) choosed specialization {1} for spec group {2}.", pChar.Guid, pChar.GetActiveSpecId(), pChar.ActiveSpecGroup);
         }
 
-        // [Opcode(ClientMessage.CliLearnTalents, "16826")]
-        public static void HandleLearnTalents(ref PacketReader packet, ref WorldClass session)
+        [Opcode(ClientMessage.CliLearnTalents, "17128")]
+        public static void HandleLearnTalents(ref PacketReader packet, WorldClass session)
         {
-            var pChar = session.Character;
+            var pChar        = session.Character;
             var talentSpells = new List<uint>();
-
-            BitUnpack BitUnpack = new BitUnpack(packet);
-
-            uint talentCount = BitUnpack.GetBits<uint>(23);
+            var BitUnpack    = new BitUnpack(packet);
+            var talentCount  = BitUnpack.GetBits<uint>(23);
 
             for (int i = 0; i < talentCount; i++)
             {
@@ -81,18 +79,18 @@ namespace WorldServer.Game.Packets.PacketHandler
                 talentSpells.Add(CliDB.Talent.Single(talent => talent.Id == talentId).SpellId);
             }
 
-            HandleUpdateTalentData(ref session);
+            HandleUpdateTalentData(session);
 
-            pChar.SetUpdateField<int>((int)PlayerFields.SpellCritPercentage + 0, SpecializationMgr.GetUnspentTalentRowCount(pChar), 0);
-            ObjectHandler.HandleUpdateObjectValues(ref session);
+            pChar.SetUpdateField<int>((int)PlayerFields.CharacterPoints, SpecializationMgr.GetUnspentTalentRowCount(pChar), 0);
+            ObjectHandler.HandleUpdateObjectValues(session);
 
             foreach (var talentSpell in talentSpells)
-                SpellHandler.HandleLearnedSpells(ref session, new List<uint>(1) { talentSpell });
+                SpellHandler.HandleLearnedSpells(session, new List<uint>(1) { talentSpell });
 
             Log.Message(LogType.Debug, "Character (Guid: {0}) learned {1} talents.", pChar.Guid, talentCount);
         }
 
-        public static void HandleUpdateTalentData(ref WorldClass session)
+        public static void HandleUpdateTalentData(WorldClass session)
         {
             var pChar = session.Character;
 
@@ -131,13 +129,13 @@ namespace WorldServer.Game.Packets.PacketHandler
             session.Send(ref updateTalentData);
         }
 
-        public static void SendSpecializationSpells(ref WorldClass session)
+        public static void SendSpecializationSpells(WorldClass session)
         {
             var specSpells = SpecializationMgr.GetSpecializationSpells(session.Character);
             var newSpells = specSpells.Select(specializationSpell => specializationSpell.Spell).ToList();
 
             if (newSpells.Count > 0)
-                SpellHandler.HandleLearnedSpells(ref session, newSpells);
+                SpellHandler.HandleLearnedSpells(session, newSpells);
         }
     }
 }

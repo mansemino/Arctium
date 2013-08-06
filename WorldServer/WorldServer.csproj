@@ -71,7 +71,6 @@
     <Compile Include="Game\Managers\AddonManager.cs" />
     <Compile Include="Game\Managers\DataManager.cs" />
     <Compile Include="Game\Managers\GossipManager.cs" />
-    <Compile Include="Game\Managers\LogoutManager.cs" />
     <Compile Include="Game\Managers\ObjectManager.cs" />
     <Compile Include="Game\Managers\SkillManager.cs" />
     <Compile Include="Game\Managers\SpawnManager.cs" />
@@ -94,7 +93,6 @@
     <Compile Include="Game\Packets\PacketHandler\LogoutHandler.cs" />
     <Compile Include="Game\Packets\PacketHandler\MiscHandler.cs" />
     <Compile Include="Game\Packets\PacketHandler\MoveHandler.cs" />
-    <Compile Include="Game\Packets\PacketHandler\RootHandler.cs" />
     <Compile Include="Game\Packets\PacketHandler\SpecializationHandler.cs" />
     <Compile Include="Game\Packets\PacketHandler\SpellHandler.cs" />
     <Compile Include="Game\Packets\PacketHandler\TimeHandler.cs" />

@@ -28,7 +28,7 @@ namespace WorldServer.Game.Packets
     public class PacketManager : Globals
     {
         static Dictionary<ClientMessage, HandlePacket> OpcodeHandlers = new Dictionary<ClientMessage, HandlePacket>();
-        delegate void HandlePacket(ref PacketReader packet, ref WorldClass session);
+        delegate void HandlePacket(ref PacketReader packet, WorldClass session);
 
         public static void DefineOpcodeHandler()
         {
@@ -55,7 +55,7 @@ namespace WorldServer.Game.Packets
             }
 
             if (OpcodeHandlers.ContainsKey(reader.Opcode))
-                OpcodeHandlers[reader.Opcode].Invoke(ref reader, ref session);
+                OpcodeHandlers[reader.Opcode].Invoke(ref reader, session);
             else
                 Log.Message(LogType.Dump, "Unknown Opcode: {0} (0x{1:X}), Length: {2}", reader.Opcode, reader.Opcode, reader.Size);
         }

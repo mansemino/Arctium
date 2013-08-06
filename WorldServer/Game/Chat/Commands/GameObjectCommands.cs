@@ -52,13 +52,13 @@ namespace WorldServer.Game.Chat.Commands
                     chatMessage.Message = "Spawn successfully added.";
 
                     spawn.AddToWorld();
-                    ChatHandler.SendMessage(ref session, chatMessage);
+                    ChatHandler.SendMessage(session, chatMessage);
                 }
                 else
                 {
                     chatMessage.Message = "Spawn can't be added.";
 
-                    ChatHandler.SendMessage(ref session, chatMessage);
+                    ChatHandler.SendMessage(session, chatMessage);
                 }
             }
         }

@@ -32,7 +32,7 @@ namespace WorldServer.Game.Packets.PacketHandler
     public class WhoHandler : Globals
     {
         [Opcode(ClientMessage.CliWhoRequest, "17128")]
-        public static void HandleWhoListRequest(ref PacketReader packet, ref WorldClass session)
+        public static void HandleWhoListRequest(ref PacketReader packet, WorldClass session)
         {
             List<string> stringList = new List<string>();
             List<uint> lengthList   = new List<uint>();

@@ -26,7 +26,7 @@ namespace WorldServer.Game.Packets.PacketHandler
 {
     public class ObjectHandler : Globals
     {
-        public static void HandleUpdateObjectCreate(ref WorldClass session)
+        public static void HandleUpdateObjectCreate(WorldClass session)
         {
             WorldObject character = session.Character;
             PacketWriter updateObject = new PacketWriter(ServerMessage.ObjectUpdate);
@@ -47,7 +47,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             session.Send(ref updateObject);
         }
 
-        public static void HandleUpdateObjectValues(ref WorldClass session, bool broadcast = false, bool toself = true)
+        public static void HandleUpdateObjectValues(WorldClass session, bool broadcast = false, bool toself = true)
         {
             WorldObject character = session.Character;
             PacketWriter updateObject = new PacketWriter(ServerMessage.ObjectUpdate);
@@ -67,7 +67,7 @@ namespace WorldServer.Game.Packets.PacketHandler
                 WorldMgr.SendToInRangeCharacter(character as Character, updateObject);
         }
 
-        public static PacketWriter HandleDestroyObject(ref WorldClass session, ulong guid, bool animation = false)
+        public static PacketWriter HandleDestroyObject(WorldClass session, ulong guid, bool animation = false)
         {
             PacketWriter destroyObject = new PacketWriter(ServerMessage.DestroyObject);
             BitPack BitPack = new BitPack(destroyObject, guid);
@@ -84,7 +84,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         }
 
         [Opcode(ClientMessage.CliObjectUpdateFailed, "16357")]
-        public static void HandleObjectUpdateFailed(ref PacketReader packet, ref WorldClass session)
+        public static void HandleObjectUpdateFailed(ref PacketReader packet, WorldClass session)
         {
             byte[] guidMask = { 6, 1, 7, 5, 0, 4, 2, 3 };
             byte[] guidBytes = { 2, 3, 7, 4, 5, 1, 0, 6 };

@@ -25,13 +25,13 @@ namespace WorldServer.Game.Packets.PacketHandler
     public class TimeHandler : Globals
     {
         [Opcode(ClientMessage.ReadyForAccountDataTimes, "17128")]
-        public static void HandleReadyForAccountDataTimes(ref PacketReader packet, ref WorldClass session)
+        public static void HandleReadyForAccountDataTimes(ref PacketReader packet, WorldClass session)
         {
-            WorldMgr.WriteAccountDataTimes(AccountDataMasks.GlobalCacheMask, ref session);
+            WorldMgr.WriteAccountDataTimes(AccountDataMasks.GlobalCacheMask, session);
         }
 
         [Opcode(ClientMessage.UITimeRequest, "17128")]
-        public static void HandleUITimeRequest(ref PacketReader packet, ref WorldClass session)
+        public static void HandleUITimeRequest(ref PacketReader packet, WorldClass session)
         {
             PacketWriter uiTime = new PacketWriter(ServerMessage.UITime);
 
@@ -41,7 +41,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         }
 
         [Opcode(ClientMessage.RealmSplit, "17128")]
-        public static void HandleRealmSplit(ref PacketReader packet, ref WorldClass session)
+        public static void HandleRealmSplit(ref PacketReader packet, WorldClass session)
         {
             uint realmSplitState = 0;
             var date = "01/01/01";
@@ -57,10 +57,10 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             session.Send(ref realmSplit);
 
-            AddonHandler.WriteAddonData(ref session);
+            AddonHandler.WriteAddonData(session);
         }
 
-        public static void HandleLoginSetTimeSpeed(ref WorldClass session)
+        public static void HandleLoginSetTimeSpeed(WorldClass session)
         {
             PacketWriter loginSetTimeSpeed = new PacketWriter(ServerMessage.LoginSetTimeSpeed);
 

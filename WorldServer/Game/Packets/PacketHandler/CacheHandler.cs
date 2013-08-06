@@ -32,7 +32,7 @@ namespace WorldServer.Game.Packets.PacketHandler
     public class CacheHandler : Globals
     {
         [Opcode(ClientMessage.CliQueryCreature, "17128")]
-        public static void HandleQueryCreature(ref PacketReader packet, ref WorldClass session)
+        public static void HandleQueryCreature(ref PacketReader packet, WorldClass session)
         {
             var id = packet.Read<int>();
 
@@ -105,7 +105,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         }
 
         [Opcode(ClientMessage.CliQueryGameObject, "17128")]
-        public static void HandleQueryGameObject(ref PacketReader packet, ref WorldClass session)
+        public static void HandleQueryGameObject(ref PacketReader packet, WorldClass session)
         {
             byte[] guidMask = { 3, 2, 5, 4, 6, 1, 7, 0 };
             byte[] guidBytes = { 6, 7, 3, 4, 0, 2, 5, 1 };
@@ -166,7 +166,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         }
 
         [Opcode(ClientMessage.CliQueryNPCText, "17128")]
-        public static void HandleCliQueryNPCText(ref PacketReader packet, ref WorldClass session)
+        public static void HandleCliQueryNPCText(ref PacketReader packet, WorldClass session)
         {
             BitUnpack BitUnpack = new BitUnpack(packet);
 
@@ -206,7 +206,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         }
 
         [Opcode(ClientMessage.QueryPlayerName, "17128")]
-        public static void HandleQueryPlayerName(ref PacketReader packet, ref WorldClass session)
+        public static void HandleQueryPlayerName(ref PacketReader packet, WorldClass session)
         {
             BitUnpack BitUnpack = new BitUnpack(packet);
 
@@ -286,7 +286,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         }
 
         [Opcode(ClientMessage.QueryRealmName, "17128")]
-        public static void HandleQueryRealmName(ref PacketReader packet, ref WorldClass session)
+        public static void HandleQueryRealmName(ref PacketReader packet, WorldClass session)
         {
             Character pChar = session.Character;
 
@@ -314,7 +314,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         }
 
         [Opcode(ClientMessage.DBQueryBulk, "17128")]
-        public static void HandleDBQueryBulk(ref PacketReader packet, ref WorldClass session)
+        public static void HandleDBQueryBulk(ref PacketReader packet, WorldClass session)
         {
             List<int> IdList = new List<int>();
             BitUnpack BitUnpack = new BitUnpack(packet);
@@ -377,7 +377,7 @@ namespace WorldServer.Game.Packets.PacketHandler
                 case DBTypes.BroadcastText:
                 {
                     foreach (var id in IdList)
-                        HandleBroadcastText(ref session, id);
+                        HandleBroadcastText(session, id);
 
                     break;
                 }
@@ -386,7 +386,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             }
         }
 
-        public static void HandleBroadcastText(ref WorldClass session, int id)
+        public static void HandleBroadcastText(WorldClass session, int id)
         {
             var broadCastText = GossipMgr.GetBroadCastText<Creature>(id);
 
