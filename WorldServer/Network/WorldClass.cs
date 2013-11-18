@@ -29,12 +29,14 @@ using Framework.ObjectDefines;
 using WorldServer.Game;
 using WorldServer.Game.Packets;
 using WorldServer.Game.WorldEntities;
+using System.Collections.Generic;
 
 namespace WorldServer.Network
 {
     public sealed class WorldClass : IDisposable
     {
         public Account Account { get; set; }
+        public List<Addon> Addons = new List<Addon>(); 
         public Character Character { get; set; }
         public static WorldNetwork world;
         public Socket clientSocket;

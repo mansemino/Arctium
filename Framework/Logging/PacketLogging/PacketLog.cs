@@ -27,6 +27,31 @@ namespace Framework.Logging.PacketLogging
 {
     public class PacketLog
     {
+        /// <summary>
+        /// Hex string lookup table.
+        /// The use of this will consume memory, but it will speed up things at least 25%
+        /// src: http://blogs.msdn.com/b/blambert/archive/2009/02/22/blambert-codesnip-fast-byte-array-to-hex-string-conversion.aspx
+        /// </summary>
+        private static readonly string[] HexStringTable = new string[]
+        {
+            "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "0A", "0B", "0C", "0D", "0E", "0F",
+            "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "1A", "1B", "1C", "1D", "1E", "1F",
+            "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "2A", "2B", "2C", "2D", "2E", "2F",
+            "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "3A", "3B", "3C", "3D", "3E", "3F",
+            "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "4A", "4B", "4C", "4D", "4E", "4F",
+            "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "5A", "5B", "5C", "5D", "5E", "5F",
+            "60", "61", "62", "63", "64", "65", "66", "67", "68", "69", "6A", "6B", "6C", "6D", "6E", "6F",
+            "70", "71", "72", "73", "74", "75", "76", "77", "78", "79", "7A", "7B", "7C", "7D", "7E", "7F",
+            "80", "81", "82", "83", "84", "85", "86", "87", "88", "89", "8A", "8B", "8C", "8D", "8E", "8F",
+            "90", "91", "92", "93", "94", "95", "96", "97", "98", "99", "9A", "9B", "9C", "9D", "9E", "9F",
+            "A0", "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "AA", "AB", "AC", "AD", "AE", "AF",
+            "B0", "B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9", "BA", "BB", "BC", "BD", "BE", "BF",
+            "C0", "C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9", "CA", "CB", "CC", "CD", "CE", "CF",
+            "D0", "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9", "DA", "DB", "DC", "DD", "DE", "DF",
+            "E0", "E1", "E2", "E3", "E4", "E5", "E6", "E7", "E8", "E9", "EA", "EB", "EC", "ED", "EE", "EF",
+            "F0", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "FA", "FB", "FC", "FD", "FE", "FF"
+        };
+
         static TextWriter logWriter;
         static Object syncObj = new Object();
 
@@ -37,103 +62,50 @@ namespace Framework.Logging.PacketLogging
                 try
                 {
                     StringBuilder sb = new StringBuilder();
+                    TimeSpan       t = DateTime.UtcNow - new DateTime(1970, 1, 1);
+ 
+                    uint secondsSinceEpoch = (uint)t.TotalSeconds;
 
                     if (serverPacket != null)
                     {
-                        sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "Client: {0}", clientInfo));
-                        sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "Time: {0}", DateTime.Now.ToString()));
-
-                        if (Enum.IsDefined(typeof(ServerMessage), serverPacket.Opcode))
-                        {
-                            sb.AppendLine("Type: ServerMessage");
-                            sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "Name: {0}", Enum.GetName(typeof(ServerMessage), serverPacket.Opcode)));
-                        }
-
-                        sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "Value: 0x{0:X} ({1})", serverPacket.Opcode, serverPacket.Opcode));
-                        sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "Length: {0}", serverPacket.Size - 2));
-
-                        sb.AppendLine("|----------------------------------------------------------------|");
-                        sb.AppendLine("| 00  01  02  03  04  05  06  07  08  09  0A  0B  0C  0D  0E  0F |");
-                        sb.AppendLine("|----------------------------------------------------------------|");
-                        sb.Append("|");
+                        sb.Append(string.Format("Time: {0};OpcodeType: SMSG;OpcodeValue: {1};Packet: ", secondsSinceEpoch, (ushort)serverPacket.Opcode));
 
                         if (serverPacket.Size - 2 != 0)
                         {
                             var data = serverPacket.ReadDataToSend().ToList();
                             data.RemoveRange(0, 4);
 
-                            byte count = 0;
                             data.ForEach(b =>
                             {
-                                sb.Append(string.Format(CultureInfo.InvariantCulture, " {0:X2} ", b));
-
-                                if (count == 15)
-                                {
-                                    sb.Append("|");
-                                    sb.AppendLine();
-                                    sb.Append("|");
-                                    count = 0;
-                                }
-                                else
-                                    count++;
+                                sb.Append(HexStringTable[b]);
                             });
-
-                            sb.AppendLine("");
-                            sb.AppendLine("|----------------------------------------------------------------|");
                         }
 
-                        sb.AppendLine("");
+                        sb.Append(";");
                     }
 
                     if (clientPacket != null)
                     {
-                        sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "Client: {0}", clientInfo));
-                        sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "Time: {0}", DateTime.Now.ToString()));
-
-                        sb.AppendLine("Type: ClientMessage");
-
-                        if (Enum.IsDefined(typeof(ClientMessage), clientPacket.Opcode))
-                            sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "Name: {0}", clientPacket.Opcode));
-                        else
-                            sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "Name: {0}", "Unknown"));
-
-                        sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "Value: 0x{0:X} ({1})", (ushort)clientPacket.Opcode, (ushort)clientPacket.Opcode));
-                        sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "Length: {0}", clientPacket.Size));
-
-                        sb.AppendLine("|----------------------------------------------------------------|");
-                        sb.AppendLine("| 00  01  02  03  04  05  06  07  08  09  0A  0B  0C  0D  0E  0F |");
-                        sb.AppendLine("|----------------------------------------------------------------|");
-                        sb.Append("|");
+                        sb.Append(string.Format("Time: {0};OpcodeType: CMSG;OpcodeValue: {1};Packet: ", secondsSinceEpoch, (ushort)clientPacket.Opcode));
 
                         if (clientPacket.Size - 2 != 0)
                         {
                             var data = clientPacket.Storage.ToList();
 
-                            byte count = 0;
                             data.ForEach(b =>
                             {
-                                sb.Append(string.Format(CultureInfo.InvariantCulture, " {0:X2} ", b));
-
-                                if (count == 15)
-                                {
-                                    sb.Append("|");
-                                    sb.AppendLine();
-                                    sb.Append("|");
-                                    count = 0;
-                                }
-                                else
-                                    count++;
+                                sb.Append(HexStringTable[b]);
                             });
-
-                            sb.AppendLine();
-                            sb.Append("|----------------------------------------------------------------|");
                         }
 
-                        sb.AppendLine("");
+                        sb.Append(";");
                     }
 
-                    logWriter = TextWriter.Synchronized(File.AppendText("Packet.log"));
+                    string name = clientInfo.Replace(":", "_");
+
+                    logWriter = TextWriter.Synchronized(File.AppendText(string.Format("Packet_{0}.dump", name)));
                     logWriter.WriteLine(sb.ToString());
+
                     logWriter.Flush();
                 }
                 finally

@@ -3940,5 +3940,38 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             session.Send(ref newWorld);
         }
+
+        public static void HandleMoveRoot(WorldClass session)
+        {
+            PacketWriter moveRoot = new PacketWriter(ServerMessage.MoveRoot);
+            BitPack BitPack = new BitPack(moveRoot, session.Character.Guid);
+
+            BitPack.WriteGuidMask(7, 1, 2, 6, 4, 3, 0, 5);
+            BitPack.Flush();
+
+            moveRoot.WriteUInt32(0);
+
+            BitPack.WriteGuidBytes(5, 7, 2, 0, 4, 1, 6, 3);
+
+            session.Send(ref moveRoot);
+        }
+
+        public static void HandleMoveUnroot(WorldClass session)
+        {
+            PacketWriter moveUnroot = new PacketWriter(ServerMessage.MoveUnroot);
+            BitPack BitPack = new BitPack(moveUnroot, session.Character.Guid);
+
+            BitPack.WriteGuidMask(2, 0, 3, 6, 1, 5, 4, 7);
+
+            BitPack.Flush();
+
+            BitPack.WriteGuidBytes(1, 5, 2, 6, 4);
+
+            moveUnroot.WriteUInt32(0);
+
+            BitPack.WriteGuidBytes(7, 0, 3);
+            
+            session.Send(ref moveUnroot);
+        }   
     }
 }

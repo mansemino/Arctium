@@ -130,7 +130,7 @@ namespace WorldServer.Game.PacketHandler
 
                 enumCharacters.WriteUInt8(result.Read<byte>(c, "Class"));
 
-                BitPack.WriteGuildGuidBytes(2);
+                BitPack.WriteGuildGuidBytes(3);
                 BitPack.WriteGuidBytes(1);
 
                 enumCharacters.WriteUInt32(result.Read<uint>(c, "CustomizeFlags"));

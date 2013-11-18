@@ -15,37 +15,85 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Constants.NetMessage;
-using Framework.Network.Packets;
+// using Framework.Constants.NetMessage;
+// using Framework.Network.Packets;
+// using WorldServer.Network;
+// using System;
+using Framework.Database;
+using Framework.Logging;
+using Framework.ObjectDefines;
 using Framework.Singleton;
-using WorldServer.Network;
+using System.Collections.Concurrent;
 
 namespace WorldServer.Game.Managers
 {
     public partial class AddonManager : SingletonBase<AddonManager>
     {
-        AddonManager() { }
+        ConcurrentDictionary<string, Addon> Addons;
 
-        public void WriteAddonData(ref WorldClass session)
+        AddonManager()
         {
-            PacketWriter addonInfo = new PacketWriter(ServerMessage.AddonInfo);
+            Addons = new ConcurrentDictionary<string, Addon>();
+            LoadAddons();
+        }
 
-            // Default static value for now.
-            // Full system will be implanted later.
-            uint addonCount = 40;
+        public void LoadAddons()
+        {
+            Log.Message(LogType.DB, "Loading addon data...");
 
-            for (int i = 0; i < addonCount; i++)
+            SQLResult result = DB.Characters.Select("SELECT * FROM addons");
+
+            for (int i = 0; i < result.Count; i++)
             {
-                addonInfo.WriteUInt8(2);
-                addonInfo.WriteUInt8(1);
-                addonInfo.WriteUInt8(0);
-                addonInfo.WriteUInt32(0);
-                addonInfo.WriteUInt8(0);
+                string Name = result.Read<string>(i, "Name");
+
+                var addon = new Addon
+                {
+                    Version         = result.Read<byte>(i, "Version"),
+                    CRC             = result.Read<uint>(i, "CRC"),
+                    AuthType        = result.Read<byte>(i, "Auth_Type"),
+                    Enabled         = result.Read<byte>(i, "Enabled"),
+                    HasPUBData      = result.Read<byte>(i, "Use_PUB"),
+                    PUBData         = null,
+                    HasUrlString    = result.Read<byte>(i, "Has_Url_String"),
+                    UrlString       = result.Read<string>(i, "Url_String"),
+                    UrlStringCRC    = result.Read<uint>(i, "Url_String_CRC")
+                };
+
+                if (addon.HasPUBData == 0x01)
+                    addon.PUBData = result.Read<byte[]>(i, "PUB_Data");
+
+                Addons.TryAdd(Name, addon);
             }
 
-            addonInfo.WriteUInt32(0);
+            Log.Message(LogType.DB, "Loaded {0} addons.", Addons.Count);
+            Log.Message();
+        }
 
-            session.Send(ref addonInfo);
+        public Addon GetAddon(string Name)
+        {
+            Addon addon = null;
+
+            Addons.TryGetValue(Name, out addon);
+
+            return addon;
+        }
+
+        public Addon GetAddon(string Name, byte Enabled, uint CRC, uint UrlStringCRC)
+        {
+            Addon addon = null;
+
+            Addons.TryGetValue(Name, out addon);
+
+            if (addon != null)
+            {
+                if ((addon.Enabled == Enabled) && (addon.CRC == CRC) && (addon.UrlStringCRC == UrlStringCRC))
+                    return addon;
+                else
+                    return null;
+            }
+
+            return addon;
         }
     }
 }

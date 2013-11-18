@@ -39,6 +39,9 @@ namespace Framework.Constants.NetMessage
         MoveSetSwimSpeed                  = 0x0A0D,
         MoveSetFlightSpeed                = 0x02B2,
         MoveTeleport                      = 0x0A2E,
+        MoveRoot                          = 0x0608,
+        MoveUnroot                        = 0x0618,
+        StandStateUpdate                  = 0x112F,
         #endregion
 
         #region JAMClientQuest
@@ -69,6 +72,8 @@ namespace Framework.Constants.NetMessage
         AuthResponse                      = 0x0D05,
         LoginSetTimeSpeed                 = 0x0D17,
         LogoutComplete                    = 0x0D95,
+        LogoutResponse                    = 0x08B5,
+        LogoutCancelAck                   = 0x0825,
         CreateChar                        = 0x1007,
         QueryNPCTextResponse              = 0x101F,
         CacheVersion                      = 0x1037,

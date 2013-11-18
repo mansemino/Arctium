@@ -23,6 +23,8 @@ namespace Framework.Constants.NetMessage
         ChatMessageSay               = 0x14FC,
         ChatMessageYell              = 0x045C,
         ChatMessageWhisper           = 0x14D8,
+        CliChatMessageDnd            = 0x0175,
+        CliChatMessageAfk            = 0x0D58,
         #endregion
 
         #region UserRouterClient
@@ -59,7 +61,10 @@ namespace Framework.Constants.NetMessage
         CliQueryNPCText             = 0x17CF,
         CliTalkToGossip             = 0x025C,
         CliLogoutRequest            = 0x03EC,
+        CliLogoutInstant            = 0x0EC1,
+        CliLogoutCancel             = 0x0A7E,
         CliSetSelection             = 0x07CD,
+        CliStandStateChange         = 0x164D,
         #endregion
 
         #region PlayerMove

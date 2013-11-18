@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System.Threading;
+using System.Threading.Tasks;
 using Framework.Constants.NetMessage;
 using Framework.Network.Packets;
 using WorldServer.Network;
@@ -23,8 +25,28 @@ namespace WorldServer.Game.Packets.PacketHandler
 {
     public class LogoutHandler : Globals
     {
+        static CancellationTokenSource cts;
+
         [Opcode(ClientMessage.CliLogoutRequest, "17538")]
         public static void HandleLogoutRequest(ref PacketReader packet, WorldClass session)
+        {
+            PacketWriter logoutResponse = new PacketWriter(ServerMessage.LogoutResponse);
+            BitPack BitPack = new BitPack(logoutResponse);
+
+            logoutResponse.WriteUInt8(0);
+            BitPack.Write(0);
+            BitPack.Flush();
+
+            session.Send(ref logoutResponse);
+
+            Task.Delay(20000).ContinueWith(_ => HandleLogoutComplete(session), (cts = new CancellationTokenSource()).Token);
+
+            session.Character.setStandState(1);
+
+            MoveHandler.HandleMoveRoot(session);
+        }
+
+        public static void HandleLogoutComplete(WorldClass session)
         {
             var pChar = session.Character;
 
@@ -33,9 +55,29 @@ namespace WorldServer.Game.Packets.PacketHandler
             PacketWriter logoutComplete = new PacketWriter(ServerMessage.LogoutComplete);
             session.Send(ref logoutComplete);
 
-            // Destroy object after logout
-            WorldMgr.SendToInRangeCharacter(pChar, ObjectHandler.HandleDestroyObject(ref session, pChar.Guid));
+            WorldMgr.SendToInRangeCharacter(pChar, Packets.PacketHandler.ObjectHandler.HandleDestroyObject(ref session, pChar.Guid));
             WorldMgr.DeleteSession(pChar.Guid);
         }
+
+        [Opcode(ClientMessage.CliLogoutCancel, "17538")]
+        public static void HandleLogoutCancel(ref PacketReader packet, WorldClass session)
+        {
+            cts.Cancel();
+
+            MoveHandler.HandleMoveUnroot(session);
+
+            PacketWriter LogoutCancelAck = new PacketWriter(ServerMessage.LogoutCancelAck);
+            session.Send(ref LogoutCancelAck);
+
+            session.Character.setStandState(0);
+        }
+
+        [Opcode(ClientMessage.CliLogoutInstant, "17538")]
+        public static void HandleLogoutInstant(ref PacketReader packet, WorldClass session)
+        {
+            var pChar = session.Character;
+
+            HandleLogoutComplete(session);
+        } 
     }
 }

@@ -25,6 +25,8 @@ using Framework.Database;
 using WorldServer.Game.ObjectDefines;
 using Talent = WorldServer.Game.ObjectDefines.Talent;
 
+using WorldServer.Game.Packets.PacketHandler;
+
 namespace WorldServer.Game.WorldEntities
 {
     public class Character : WorldObject
@@ -52,6 +54,13 @@ namespace WorldServer.Game.WorldEntities
         public byte ActiveSpecGroup;
         public uint PrimarySpec;
         public uint SecondarySpec;
+        public bool UnitIsAfk;
+        public string UnitIsAfkMessage;
+        public bool UnitIsDnd;
+        public string UnitIsDndMessage;
+        public bool UnitHasEmote;
+        public int UnitStandState;
+        public byte UnitFaction; // 0 - both (pandaren low), 1 - alliance, 2 - horde
 
         public Dictionary<ulong, WorldObject> InRangeObjects = new Dictionary<ulong, WorldObject>();
 
@@ -93,6 +102,25 @@ namespace WorldServer.Game.WorldEntities
             ActiveSpecGroup = result.Read<byte>(0, "ActiveSpecGroup");
             PrimarySpec     = result.Read<uint>(0, "PrimarySpecId");
             SecondarySpec   = result.Read<uint>(0, "SecondarySpecId");
+
+            UnitIsAfk = false;
+            UnitIsAfkMessage = "";
+            UnitIsDnd = false;
+            UnitIsDndMessage = "";
+            UnitStandState = 0;
+
+            // TODO:
+            // Change faction management based on DB (pandarens change faction from 24 (common) to 25 (alliance) or 26 (horde) after complete their mission)
+            uint MASKALLIANCE = 0x0240089A;
+            uint MASKHORDE = 0x04000764;
+            uint MASKCOMMONPANDA = 0x01000000;
+
+            uint playerFactionMask = ((uint)1 << Race);
+
+            if ((playerFactionMask & MASKALLIANCE) != 0) UnitFaction = 1;
+            else if ((playerFactionMask & MASKHORDE) != 0) UnitFaction = 2;
+            else if ((playerFactionMask & MASKCOMMONPANDA) != 0) UnitFaction = 0;
+            else UnitFaction = 3; // wtf? This can't happen
 
             Globals.SpecializationMgr.LoadTalents(this);
             Globals.SpellMgr.LoadSpells(this);
@@ -171,6 +199,91 @@ namespace WorldServer.Game.WorldEntities
                 return 0;
 
             return (ActiveSpecGroup == 0 && PrimarySpec != 0) ? PrimarySpec : SecondarySpec;
+        }
+
+        public void setAfkState(string afkText = "")
+        {
+            bool afkState = (afkText.Length > 0);
+
+            if (this.UnitIsAfk != afkState)
+            {
+                this.UnitIsAfk = afkState;
+
+                if (this.UnitIsAfk && this.UnitIsDnd)
+                {
+                    this.UnitIsDnd = false;
+                    this.UnitIsDndMessage = "";
+                }
+
+                this.UnitIsAfkMessage = afkText;
+
+                SetUpdateField<int>((int)PlayerFields.PlayerFlags, (int)((this.UnitIsAfk) ? PlayerFlag.Afk : PlayerFlag.None));
+
+                var session = WorldMgr.GetSession(this.Guid);
+                ObjectHandler.HandleUpdateObjectValues(ref session, true);
+            }
+        }
+
+        public void setDndState(string dndText = "")
+        {
+            bool dndState = (dndText.Length > 0);
+
+            if (this.UnitIsDnd != dndState)
+            {
+                this.UnitIsDnd = dndState;
+
+                if (this.UnitIsAfk && this.UnitIsDnd)
+                {
+                    this.UnitIsAfk = false;
+                    this.UnitIsAfkMessage = "";
+                }
+
+                this.UnitIsDndMessage = dndText;
+
+                SetUpdateField<int>((int)PlayerFields.PlayerFlags, (int)((this.UnitIsDnd) ? PlayerFlag.Dnd : PlayerFlag.None));
+
+                var session = WorldMgr.GetSession(this.Guid);
+
+                ObjectHandler.HandleUpdateObjectValues(ref session, true);
+            }
+        }
+
+        public void setEmoteState(uint emote = 0, bool OnlyBroadcast = false)
+        {
+            if ((emote == 0) && !this.UnitHasEmote)
+                return;
+
+            var session = WorldMgr.GetSession(this.Guid);
+            this.UnitHasEmote = (emote != 0);
+
+            SetUpdateField<int>((int)UnitFields.EmoteState, (int)emote);
+
+            ObjectHandler.HandleUpdateObjectValues(ref session, true, OnlyBroadcast);
+        }
+
+        public void setStandState(int state = 0, bool broadcast = true, bool toself = true)
+        {
+            if (state == UnitStandState)
+                return;
+
+            this.UnitStandState = state;
+            byte status = (byte)state;
+            var session = WorldMgr.GetSession(this.Guid);
+
+            SetUpdateField<int>((int)UnitFields.AnimTier, (int)state);
+
+            if (toself)
+                EmoteHandler.HandleStandStateChangeAck(status, session);
+
+            if (broadcast)
+                ObjectHandler.HandleUpdateObjectValues(ref session, true, toself);
+        }
+
+        // TODO: When Guilds are implemented, use GUID to get Guild Name.
+        // Used in WhoList
+        public string getGuildName()
+        {
+            return string.Empty;
         }
     }
 }
